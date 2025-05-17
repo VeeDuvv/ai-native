@@ -16,14 +16,15 @@
 
 ### Completed
 - ✅ Define the core architecture for our AI-native ad agency
+- ✅ Create a roadmap for MVP development
 
 ### In Progress
-- 🔄 Create a roadmap for MVP development
+- 🔄 Set up the agent framework (High Priority)
 
 ### Pending
-- ⏳ Set up the agent framework (High Priority)
 - ⏳ Design the API layer (High Priority)
 - ⏳ Implement agent observability framework (High Priority)
+- ⏳ Develop TISIT second brain foundation (High Priority)
 - ⏳ Implement basic agent communication protocol (Medium Priority)
 
 ## Task Details
@@ -37,19 +38,22 @@
   - Knowledge Repository
   - API Gateway
   - Agent Observability Framework
+- Created agent_types.md classifying agents as:
+  - Setup Agents (one-time tasks)
+  - Operational Agents (recurring processes)
 
 ### Create a roadmap for MVP development
-- Status: In Progress
+- Status: Completed
 - Priority: High
-- Goal: Define clear milestones, timelines, and deliverables for MVP
-- Sub-tasks:
-  - Identify core features for MVP
-  - Determine technical dependencies
-  - Create development timeline
-  - Define success criteria for MVP launch
+- Outcome: Created mvp_roadmap.md defining:
+  - Three-phase development approach (12 weeks)
+  - Key deliverables for each phase
+  - Technical dependencies
+  - Resource requirements
+  - Success criteria
 
 ### Set up the agent framework
-- Status: Pending
+- Status: In Progress
 - Priority: High
 - Description: Create the foundation for our agent-based system
 - Requirements:
@@ -77,6 +81,16 @@
   - Create monitoring dashboards
   - Develop anomaly detection
   - Build performance metrics system
+
+### Develop TISIT second brain foundation
+- Status: Pending
+- Priority: High
+- Description: Implement the knowledge graph for important terms and concepts
+- Requirements:
+  - Create entity data structure
+  - Implement storage system
+  - Develop basic query interface
+  - Build relationship management
 
 ### Implement basic agent communication protocol
 - Status: Pending
