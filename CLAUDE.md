@@ -6,6 +6,17 @@ This file contains important information about the AI-native project.
 
 Project Objective: I want to use Generative AI and Agentic AI to create an AI-native company
 
+## Development Guidelines
+
+### License and Copyright
+
+Include the following lines at the top of every file we create:
+
+```
+# SPDX-License-Identifier: MIT
+# Copyright (c) 2025 Vamsi Duvvuri
+```
+
 ## Our Tenets: AI-Native Ad Agency Architecture Principles
 
 <!-- SPDX-License-Identifier: MIT -->
