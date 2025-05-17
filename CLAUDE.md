@@ -17,6 +17,26 @@ Include the following lines at the top of every file we create:
 # Copyright (c) 2025 Vamsi Duvvuri
 ```
 
+### Documentation Requirements
+
+For every file we create, include two explanations of the file's purpose:
+
+1. **Fifth Grade Explanation**: A simple explanation that a 10-11 year old could understand
+2. **High School Explanation**: A more detailed explanation suitable for a high school student
+
+Example:
+```
+# Fifth Grade Explanation:
+# This file is like a translator that helps your computer talk to Claude. It sends your
+# questions to Claude and brings back the answers.
+
+# High School Explanation:
+# This module implements a client for the Claude API that handles authentication,
+# request formatting, and response parsing. It abstracts the HTTP communication
+# and provides a clean interface for the application to interact with Claude's
+# capabilities.
+```
+
 ## Our Tenets: AI-Native Ad Agency Architecture Principles
 
 <!-- SPDX-License-Identifier: MIT -->
