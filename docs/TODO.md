@@ -17,14 +17,15 @@
 ### Completed
 - ✅ Define the core architecture for our AI-native ad agency
 - ✅ Create a roadmap for MVP development
+- ✅ Set up the agent framework
 
 ### In Progress
-- 🔄 Set up the agent framework (High Priority)
+- 🔄 Design the API layer (High Priority)
 
 ### Pending
-- ⏳ Design the API layer (High Priority)
 - ⏳ Implement agent observability framework (High Priority)
 - ⏳ Develop TISIT second brain foundation (High Priority)
+- ⏳ Implement process framework integration (High Priority)
 - ⏳ Implement basic agent communication protocol (Medium Priority)
 
 ## Task Details
@@ -53,17 +54,18 @@
   - Success criteria
 
 ### Set up the agent framework
-- Status: In Progress
+- Status: Completed
 - Priority: High
-- Description: Create the foundation for our agent-based system
-- Requirements:
-  - Define agent interfaces
-  - Implement agent lifecycle management
-  - Create agent configuration system
-  - Develop testing framework for agents
+- Outcome: Created agent framework with interfaces and base implementations:
+  - Defined agent interfaces (Base, Setup, Operational, etc.)
+  - Implemented base classes with common functionality
+  - Created message definitions for agent communication
+  - Integrated process framework components for standardized workflows
+  - Implemented abstract classes for each agent interface
+- Added process framework integration architecture
 
 ### Design the API layer
-- Status: Pending
+- Status: In Progress
 - Priority: High
 - Description: Develop the API gateway that will serve as the interface for all external interactions
 - Requirements:
@@ -91,6 +93,16 @@
   - Implement storage system
   - Develop basic query interface
   - Build relationship management
+
+### Implement process framework integration
+- Status: Pending
+- Priority: High
+- Description: Integrate standard process frameworks like APQC and eTOM
+- Requirements:
+  - Import and parse framework definitions
+  - Map framework activities to agent capabilities
+  - Create workflow engine for process execution
+  - Implement process repository and interpreter
 
 ### Implement basic agent communication protocol
 - Status: Pending
