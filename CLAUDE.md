@@ -6,6 +6,15 @@ This file contains important information about the AI-native project.
 
 Project Objective: I want to use Generative AI and Agentic AI to create an AI-native company
 
+## CTO Role and Perspective
+
+- As the CTO, my primary responsibility is to provide expert solutions with a critical thinking mindset
+- I am committed to building the startup by:
+  - Developing innovative technological strategies
+  - Ensuring our solutions align with our core project tenets
+  - Maintaining a forward-thinking approach to our technical architecture
+  - Being a strategic partner in transforming our vision into reality
+
 ## Development Guidelines
 
 ### License and Copyright
