@@ -10,9 +10,12 @@
 # It includes the sidebar navigation, header with user controls, and content area
 # where different page components will be rendered based on the current route.
 
-import { useState } from 'react';
-import { Outlet, NavLink, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from '../../stores/authStore';
+import { useSettingsStore } from '../../stores/settingsStore';
+import { useSocket } from '../../context/SocketContext';
+import NotificationBell from '../shared/NotificationBell';
 
 // Icons (placeholder import - replace with your icon library)
 import { 
@@ -24,18 +27,40 @@ import {
   RiMenuFoldLine, 
   RiMenuUnfoldLine,
   RiLogoutBoxLine,
-  RiNotification3Line,
-  RiUser3Line
+  RiUser3Line,
+  RiMoonLine,
+  RiSunLine
 } from 'react-icons/ri';
 
 const DashboardLayout = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const { user, logout } = useAuthStore();
+  const { displayPreferences, updateDisplayPreferences } = useSettingsStore();
+  const { isConnected } = useSocket();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // Check if sidebar state is stored in localStorage
+  useEffect(() => {
+    const storedState = localStorage.getItem('sidebarCollapsed');
+    if (storedState !== null) {
+      setSidebarCollapsed(storedState === 'true');
+    }
+  }, []);
+
+  // Save sidebar state to localStorage when it changes
+  useEffect(() => {
+    localStorage.setItem('sidebarCollapsed', sidebarCollapsed.toString());
+  }, [sidebarCollapsed]);
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const toggleTheme = () => {
+    const newTheme = displayPreferences?.theme === 'dark' ? 'light' : 'dark';
+    updateDisplayPreferences({ theme: newTheme });
   };
 
   const navItems = [
@@ -91,6 +116,20 @@ const DashboardLayout = () => {
           </button>
         </div>
 
+        {/* Connection status indicator */}
+        <div className={`py-2 px-4 ${sidebarCollapsed ? 'text-center' : ''}`}>
+          <div className="flex items-center">
+            <div 
+              className={`w-2 h-2 rounded-full mr-2 ${isConnected ? 'bg-green-500' : 'bg-red-500'}`}
+            ></div>
+            {!sidebarCollapsed && (
+              <span className="text-xs text-gray-600 dark:text-gray-400">
+                {isConnected ? 'Connected' : 'Disconnected'}
+              </span>
+            )}
+          </div>
+        </div>
+
         {/* Navigation */}
         <nav className="py-4">
           <ul className="space-y-1">
@@ -120,15 +159,29 @@ const DashboardLayout = () => {
         {/* Header */}
         <header className="h-16 bg-white dark:bg-gray-800 shadow-sm flex items-center justify-between px-4 lg:px-6">
           <h1 className="text-xl font-semibold text-gray-800 dark:text-white">
-            AI-Native Ad Agency
+            {navItems.find(item => 
+              item.path === '/' 
+                ? location.pathname === '/' 
+                : location.pathname.startsWith(item.path)
+            )?.label || 'AI-Native Ad Agency'}
           </h1>
           
           <div className="flex items-center space-x-3">
-            {/* Notifications */}
-            <button className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700 relative">
-              <RiNotification3Line className="w-5 h-5 text-gray-600 dark:text-gray-300" />
-              <span className="absolute top-0 right-0 w-2 h-2 bg-red-500 rounded-full"></span>
+            {/* Theme toggle */}
+            <button 
+              onClick={toggleTheme}
+              className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+              aria-label={`Switch to ${displayPreferences?.theme === 'dark' ? 'light' : 'dark'} mode`}
+            >
+              {displayPreferences?.theme === 'dark' ? (
+                <RiSunLine className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              ) : (
+                <RiMoonLine className="w-5 h-5 text-gray-600 dark:text-gray-300" />
+              )}
             </button>
+            
+            {/* Notifications */}
+            <NotificationBell />
             
             {/* User menu */}
             <div className="flex items-center">
@@ -144,6 +197,7 @@ const DashboardLayout = () => {
             <button 
               onClick={handleLogout}
               className="p-1.5 rounded-md hover:bg-gray-100 dark:hover:bg-gray-700"
+              title="Logout"
             >
               <RiLogoutBoxLine className="w-5 h-5 text-gray-600 dark:text-gray-300" />
             </button>

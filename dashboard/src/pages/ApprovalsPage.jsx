@@ -11,122 +11,80 @@
 # clients to view, approve, or reject these requests with appropriate feedback.
 
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useApprovalStore } from '../stores/approvalStore';
+import { useNotificationContext } from '../components/shared/NotificationProvider';
+import { useSocketEvent } from '../context/SocketContext';
 
 // Components
 import ApprovalCard from '../components/approvals/ApprovalCard';
-
-const API_URL = import.meta.env.VITE_API_URL || '/api';
+import ApprovalDetail from '../components/approvals/ApprovalDetail';
 
 const ApprovalsPage = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [approvals, setApprovals] = useState([]);
-  const [error, setError] = useState(null);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const [selectedApprovalId, setSelectedApprovalId] = useState(id || null);
+  const [viewMode, setViewMode] = useState(id ? 'detail' : 'list');
   
-  // Filtering
-  const [filterType, setFilterType] = useState('all');
-  const [filterStatus, setFilterStatus] = useState('pending');
-  const [searchQuery, setSearchQuery] = useState('');
-
+  const { 
+    approvals, 
+    currentApproval, 
+    isLoading, 
+    error, 
+    filters, 
+    pagination,
+    fetchApprovals,
+    fetchApprovalById,
+    setFilters,
+    setPagination,
+    clearCurrentApproval,
+    clearError
+  } = useApprovalStore();
+  
+  const { error: showError } = useNotificationContext();
+  
+  // Fetch approvals on initial load and when filters change
   useEffect(() => {
-    const fetchApprovals = async () => {
-      try {
-        setIsLoading(true);
-        setError(null);
-        
-        const token = localStorage.getItem('auth_token');
-        
-        if (!token) {
-          throw new Error('No authentication token found');
-        }
-        
-        const response = await axios.get(`${API_URL}/approvals`, {
-          headers: { Authorization: `Bearer ${token}` },
-          params: { status: filterStatus !== 'all' ? filterStatus : undefined }
-        });
-        
-        setApprovals(response.data);
-      } catch (err) {
-        console.error('Error fetching approvals:', err);
-        setError('Failed to load approval requests. Please try again.');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
     fetchApprovals();
-  }, [filterStatus]);
-
-  // Demo data for development
-  const demoApprovals = [
-    { 
-      id: 1, 
-      title: 'Summer Collection Banner Ad', 
-      type: 'creative', 
-      status: 'pending',
-      campaign: 'Summer Collection Launch',
-      campaignId: 1,
-      createdAt: '2025-05-17T11:20:00Z', 
-      deadline: '2025-05-19T11:20:00Z',
-      description: 'New banner ad featuring the summer collection hero image.',
-      requestedBy: 'Sophia Chen',
-      requestedById: 101
-    },
-    { 
-      id: 2, 
-      title: 'Budget Increase Request', 
-      type: 'budget', 
-      status: 'pending',
-      campaign: 'Brand Awareness Campaign',
-      campaignId: 3,
-      createdAt: '2025-05-16T15:30:00Z', 
-      deadline: '2025-05-18T15:30:00Z',
-      description: 'Request to increase campaign budget from $15,000 to $20,000.',
-      requestedBy: 'Michael Johnson',
-      requestedById: 102
-    },
-    { 
-      id: 3, 
-      title: 'Product Video Ad', 
-      type: 'creative', 
-      status: 'pending',
-      campaign: 'Summer Collection Launch',
-      campaignId: 1,
-      createdAt: '2025-05-15T09:45:00Z', 
-      deadline: '2025-05-17T09:45:00Z',
-      description: '30-second product showcase video for Instagram and Facebook.',
-      requestedBy: 'Sophia Chen',
-      requestedById: 101
-    },
-    { 
-      id: 4, 
-      title: 'Audience Targeting Update', 
-      type: 'target', 
-      status: 'pending',
-      campaign: 'Holiday Season Promotions',
-      campaignId: 2,
-      createdAt: '2025-05-17T14:15:00Z', 
-      deadline: '2025-05-19T14:15:00Z',
-      description: 'Proposed changes to audience targeting parameters to include additional geographic regions.',
-      requestedBy: 'Alex Rodriguez',
-      requestedById: 103
-    },
-    { 
-      id: 5, 
-      title: 'Campaign Timeline Extension', 
-      type: 'schedule', 
-      status: 'pending',
-      campaign: 'Brand Awareness Campaign',
-      campaignId: 3,
-      createdAt: '2025-05-16T10:30:00Z', 
-      deadline: '2025-05-18T10:30:00Z',
-      description: 'Request to extend campaign end date by two weeks.',
-      requestedBy: 'Michael Johnson',
-      requestedById: 102
+  }, [fetchApprovals, filters, pagination.page]);
+  
+  // Show error notification when approval store error changes
+  useEffect(() => {
+    if (error) {
+      showError(error);
+      clearError();
     }
-  ];
-
+  }, [error, showError, clearError]);
+  
+  // Fetch approval details when ID changes
+  useEffect(() => {
+    if (selectedApprovalId) {
+      fetchApprovalById(selectedApprovalId);
+      setViewMode('detail');
+    } else {
+      clearCurrentApproval();
+      setViewMode('list');
+    }
+  }, [selectedApprovalId, fetchApprovalById, clearCurrentApproval]);
+  
+  // Update URL when selected approval changes
+  useEffect(() => {
+    if (selectedApprovalId && viewMode === 'detail') {
+      navigate(`/approvals/${selectedApprovalId}`, { replace: true });
+    } else if (!selectedApprovalId && viewMode === 'list') {
+      navigate('/approvals', { replace: true });
+    }
+  }, [selectedApprovalId, viewMode, navigate]);
+  
+  // Handle new approvals from WebSocket
+  const handleNewApproval = (payload) => {
+    // Refresh approvals list when a new approval is received
+    fetchApprovals();
+  };
+  
+  // Listen for new approval events
+  useSocketEvent('new_approval', handleNewApproval);
+  
   // Approval types for filter
   const approvalTypes = [
     { value: 'all', label: 'All Types' },
@@ -144,46 +102,58 @@ const ApprovalsPage = () => {
     { value: 'approved', label: 'Approved' },
     { value: 'rejected', label: 'Rejected' }
   ];
-
-  // Use approvals data or fallback to demoApprovals
-  const approvalsData = approvals.length ? approvals : demoApprovals;
   
-  // Filter approvals
-  const filteredApprovals = approvalsData.filter(approval => {
-    const matchesType = filterType === 'all' || approval.type === filterType;
-    const matchesSearch = approval.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                         approval.campaign.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesType && matchesSearch;
-  });
+  // Handle filter changes
+  const handleFilterChange = (key, value) => {
+    setFilters({ [key]: value });
+  };
+  
+  // Handle search input change
+  const handleSearchChange = (e) => {
+    setFilters({ search: e.target.value });
+  };
+  
+  // Handle approval selection
+  const handleApprovalSelect = (id) => {
+    setSelectedApprovalId(id);
+  };
+  
+  // Handle going back to list view
+  const handleBackToList = () => {
+    setSelectedApprovalId(null);
+    setViewMode('list');
+    navigate('/approvals', { replace: true });
+  };
 
-  if (isLoading) {
+  // If in detail view, show only the selected approval
+  if (viewMode === 'detail') {
     return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-3 text-gray-600 dark:text-gray-400">Loading approval requests...</p>
-        </div>
+      <div className="max-w-4xl mx-auto">
+        <button 
+          onClick={handleBackToList}
+          className="flex items-center mb-4 text-sm text-primary hover:text-primary-dark"
+        >
+          <svg className="w-5 h-5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          Back to approvals
+        </button>
+        
+        {isLoading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+              <p className="mt-3 text-gray-600 dark:text-gray-400">Loading approval details...</p>
+            </div>
+          </div>
+        ) : (
+          <ApprovalDetail approval={currentApproval} onClose={handleBackToList} />
+        )}
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <div className="text-center">
-          <div className="text-red-500 text-xl mb-2">⚠️</div>
-          <p className="text-gray-800 dark:text-gray-200 mb-2">{error}</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-primary text-white rounded-md hover:bg-primary-dark"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
+  // Otherwise, show the list view
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -208,8 +178,8 @@ const ApprovalsPage = () => {
                 className="block w-full pl-10 pr-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white dark:bg-gray-700 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
                 placeholder="Search approvals"
                 type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
+                value={filters.search}
+                onChange={handleSearchChange}
               />
             </div>
           </div>
@@ -221,8 +191,8 @@ const ApprovalsPage = () => {
               id="type"
               name="type"
               className="block w-full pl-3 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
+              value={filters.type}
+              onChange={(e) => handleFilterChange('type', e.target.value)}
             >
               {approvalTypes.map(option => (
                 <option key={option.value} value={option.value}>{option.label}</option>
@@ -237,8 +207,8 @@ const ApprovalsPage = () => {
               id="status"
               name="status"
               className="block w-full pl-3 pr-10 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-900 dark:text-white dark:bg-gray-700 focus:outline-none focus:ring-primary focus:border-primary sm:text-sm"
-              value={filterStatus}
-              onChange={(e) => setFilterStatus(e.target.value)}
+              value={filters.status}
+              onChange={(e) => handleFilterChange('status', e.target.value)}
             >
               {approvalStatuses.map(option => (
                 <option key={option.value} value={option.value}>{option.label}</option>
@@ -250,18 +220,36 @@ const ApprovalsPage = () => {
       
       {/* Approvals list */}
       <div className="space-y-4">
-        {filteredApprovals.length > 0 ? (
-          filteredApprovals.map(approval => (
-            <ApprovalCard key={approval.id} approval={approval} />
+        {isLoading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="text-center">
+              <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin mx-auto"></div>
+              <p className="mt-3 text-gray-600 dark:text-gray-400">Loading approval requests...</p>
+            </div>
+          </div>
+        ) : approvals.length > 0 ? (
+          approvals.map(approval => (
+            <div 
+              key={approval.id}
+              onClick={() => handleApprovalSelect(approval.id)}
+              className="cursor-pointer"
+            >
+              <ApprovalCard 
+                approval={approval}
+                onClick={() => handleApprovalSelect(approval.id)}
+              />
+            </div>
           ))
         ) : (
           <div className="bg-white dark:bg-gray-800 p-8 rounded-lg shadow border border-gray-200 dark:border-gray-700 text-center">
             <p className="text-gray-600 dark:text-gray-400 mb-4">No approval requests found matching your filters.</p>
             <button
               onClick={() => {
-                setSearchQuery('');
-                setFilterType('all');
-                setFilterStatus('pending');
+                setFilters({
+                  search: '',
+                  type: 'all',
+                  status: 'pending'
+                });
               }}
               className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-200 dark:hover:bg-gray-600"
             >
@@ -270,6 +258,121 @@ const ApprovalsPage = () => {
           </div>
         )}
       </div>
+      
+      {/* Pagination */}
+      {pagination.totalPages > 1 && (
+        <div className="flex justify-between items-center border-t border-gray-200 dark:border-gray-700 px-4 py-3 sm:px-6">
+          <div className="flex-1 flex justify-between sm:hidden">
+            <button
+              onClick={() => setPagination({ page: pagination.page - 1 })}
+              disabled={pagination.page === 1}
+              className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <button
+              onClick={() => setPagination({ page: pagination.page + 1 })}
+              disabled={pagination.page === pagination.totalPages}
+              className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+            >
+              Next
+            </button>
+          </div>
+          <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm text-gray-700 dark:text-gray-300">
+                Showing <span className="font-medium">{((pagination.page - 1) * pagination.limit) + 1}</span> to <span className="font-medium">{Math.min(pagination.page * pagination.limit, pagination.total)}</span> of{' '}
+                <span className="font-medium">{pagination.total}</span> results
+              </p>
+            </div>
+            <div>
+              <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
+                <button
+                  onClick={() => setPagination({ page: pagination.page - 1 })}
+                  disabled={pagination.page === 1}
+                  className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+                >
+                  <span className="sr-only">Previous</span>
+                  <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </button>
+                
+                {/* Page numbers */}
+                {[...Array(pagination.totalPages).keys()].map((page) => {
+                  const pageNumber = page + 1;
+                  
+                  // Show directly adjacent pages, first, last, and current page
+                  const showPageNumber = 
+                    pageNumber === 1 || 
+                    pageNumber === pagination.totalPages ||
+                    pageNumber === pagination.page ||
+                    pageNumber === pagination.page - 1 ||
+                    pageNumber === pagination.page + 1;
+                  
+                  // Show ellipsis for page gaps
+                  const showEllipsisBefore = 
+                    pageNumber === pagination.page - 2 && pagination.page > 3;
+                  
+                  const showEllipsisAfter = 
+                    pageNumber === pagination.page + 2 && pagination.page < pagination.totalPages - 2;
+                  
+                  if (showEllipsisBefore) {
+                    return (
+                      <span
+                        key={`ellipsis-before-${pageNumber}`}
+                        className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300"
+                      >
+                        ...
+                      </span>
+                    );
+                  }
+                  
+                  if (showEllipsisAfter) {
+                    return (
+                      <span
+                        key={`ellipsis-after-${pageNumber}`}
+                        className="relative inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-300"
+                      >
+                        ...
+                      </span>
+                    );
+                  }
+                  
+                  if (showPageNumber) {
+                    return (
+                      <button
+                        key={pageNumber}
+                        onClick={() => setPagination({ page: pageNumber })}
+                        className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${
+                          pagination.page === pageNumber
+                            ? 'z-10 bg-primary border-primary text-white'
+                            : 'bg-white dark:bg-gray-800 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700'
+                        }`}
+                      >
+                        {pageNumber}
+                      </button>
+                    );
+                  }
+                  
+                  return null;
+                })}
+                
+                <button
+                  onClick={() => setPagination({ page: pagination.page + 1 })}
+                  disabled={pagination.page === pagination.totalPages}
+                  className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm font-medium text-gray-500 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 disabled:opacity-50"
+                >
+                  <span className="sr-only">Next</span>
+                  <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                    <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                  </svg>
+                </button>
+              </nav>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
