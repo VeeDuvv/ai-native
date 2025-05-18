@@ -180,7 +180,7 @@ def has_role(roles: Union[str, List[str]]):
         if not any(role in current_user.roles for role in roles):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail=f"Insufficient permissions. Required roles: {, .join(roles)}",
+                detail=f"Insufficient permissions. Required roles: {', '.join(roles)}",
             )
         return current_user
         
@@ -208,7 +208,7 @@ def has_scope(scopes: Union[str, List[str]]):
             if not any(scope in token_scopes for scope in scopes):
                 raise HTTPException(
                     status_code=status.HTTP_403_FORBIDDEN,
-                    detail=f"Insufficient permissions. Required scopes: {, .join(scopes)}",
+                    detail=f"Insufficient permissions. Required scopes: {', '.join(scopes)}",
                 )
         except JWTError:
             raise HTTPException(
