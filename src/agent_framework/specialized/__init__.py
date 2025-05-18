@@ -19,3 +19,6 @@ in the advertising agency, leveraging the agent framework foundation.
 
 from . import strategy
 from . import creative
+from . import media
+from . import analytics
+from . import client

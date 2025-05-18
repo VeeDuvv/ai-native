@@ -1063,13 +1063,17 @@ class StrategyAgent(BaseProcessAwareAgent):
         
         # Create media brief
         media_brief = {
+            "message_type": "MEDIA_BRIEF",  # Specific message type expected by MediaPlanningAgent
             "campaign_id": campaign_id,
             "campaign_name": campaign["details"].get("name", ""),
             "campaign_objectives": campaign["details"].get("objectives", []),
             "target_audience": campaign["details"].get("target_audience", {}),
             "budget": campaign["details"].get("budget", 0),
+            "media_budget": campaign["details"].get("media_budget", campaign["details"].get("budget", 0) * 0.7),  # Default to 70% of total budget
             "start_date": campaign["details"].get("start_date", ""),
             "end_date": campaign["details"].get("end_date", ""),
+            "primary_objective": campaign["details"].get("primary_objective", "awareness"),  # awareness, consideration, conversion
+            "secondary_objective": campaign["details"].get("secondary_objective", None),
             "media_strategy": strategy.get("media_strategy", {}),
             "success_metrics": [metric for metric in strategy.get("success_metrics", [])
                               if any(word in metric.get("name", "").lower() for word in ["impression", "reach", "frequency", "cpm"])]
