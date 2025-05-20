@@ -4,10 +4,10 @@
 # Koya AI Agent Names
 
 ## Fifth Grade Explanation:
-This document gives fun, memorable names to all the AI helpers in our advertising company. The names are alliterative (starting with the same sound) and relate to what each AI does, making them easier to remember.
+This document gives names to all the AI helpers in our advertising company. Each AI has a last name that tells you what they do, making it easy to remember their job.
 
 ## High School Explanation:
-This document provides alliterative character names for each specialized AI agent in Koya's hierarchy. These names are designed to be memorable, reflect each agent's function, and create a cohesive identity system that makes referencing and conceptualizing our AI workforce more intuitive.
+This document provides character names for each specialized AI agent in Koya's hierarchy. These names follow a consistent naming convention where the last name directly represents the agent's function, creating an intuitive reference system while maintaining distinct personalities through varied first names.
 
 ---
 
@@ -22,156 +22,156 @@ This document provides alliterative character names for each specialized AI agen
 # Front Office Agents (Reporting to Faz)
 
 ## Strategic Agents
-1. **Market Analyst**: **Morgan Metrics**
+1. **Market Analyst**: **Maya Markets**
    - Competitive intelligence gathering and market trend analysis
-   - "Morgan meticulously mines market movements"
+   - "Maya uncovers market opportunities others miss"
 
-2. **Brand Strategist**: **Brenda Blueprint**
+2. **Brand Strategist**: **Simon Strategy**
    - Brand positioning and architecture development
-   - "Brenda builds brilliant brand blueprints"
+   - "Simon transforms brands with visionary strategic thinking"
 
-3. **Audience Specialist**: **Alex Audience**
+3. **Audience Specialist**: **Olivia Audience**
    - Audience segmentation and persona development
-   - "Alex analyzes audience attributes accurately"
+   - "Olivia understands people at a deeper level than most"
 
-4. **Campaign Strategist**: **Casey Campaign**
+4. **Campaign Strategist**: **Carlos Campaign**
    - Campaign objective setting and framework development
-   - "Casey crafts compelling campaign concepts"
+   - "Carlos architcts campaigns that deliver business results"
 
 ## Client Service Agents
-5. **Business Developer**: **Damon Deal**
+5. **Business Developer**: **Derek Development**
    - Prospect identification and pitch development
-   - "Damon delivers dynamic deals daily"
+   - "Derek opens doors and builds relationships that last"
 
-6. **Account Director**: **Alicia Advocate**
+6. **Account Director**: **Elena Account**
    - Client relationship management and strategic guidance
-   - "Alicia actively advocates for agency allies"
+   - "Elena ensures clients always feel valued and understood"
 
-7. **Project Coordinator**: **Penny Planner**
+7. **Project Coordinator**: **Theo Timeline**
    - Timeline management and resource coordination
-   - "Penny precisely plans project pathways"
+   - "Theo keeps everything on track, on time, and on budget"
 
 # Middle Office Agents (Reporting to Mindy)
 
 ## Creative Agents
-8. **Creative Director**: **Colton Concept**
+8. **Creative Director**: **Lucas Creative**
    - Creative concept development and team direction
-   - "Colton cultivates creative consciousness"
+   - "Lucas brings fresh perspective to every creative challenge"
 
-9. **Copywriter**: **Wendy Wordsmith**
+9. **Copywriter**: **Nina Words**
    - Messaging development and content creation
-   - "Wendy weaves wonderful word wizardry"
+   - "Nina crafts words that move people to action"
 
-10. **Art Director**: **Vincent Visual**
+10. **Art Director**: **Marcus Visual**
     - Visual concept development and design direction
-    - "Vincent visualizes vivid visual vocabularies"
+    - "Marcus transforms concepts into striking visual experiences"
 
-11. **Content Producer**: **Paige Producer**
+11. **Content Producer**: **Sophia Production**
     - Asset production management and adaptation
-    - "Paige produces perfect publishing products"
+    - "Sophia brings creative visions to life across all formats"
 
 ## Media Agents
-12. **Media Planner**: **Milo Media**
+12. **Media Planner**: **James Planning**
     - Channel mix strategy and audience reach planning
-    - "Milo masterminds media maneuvering"
+    - "James designs media strategies that maximize impact"
 
-13. **Media Buyer**: **Bianca Buyer**
+13. **Media Buyer**: **Zara Buys**
     - Inventory negotiation and rate optimization
-    - "Bianca bargains for better broadcasting buys"
+    - "Zara secures the best media placements at unbeatable prices"
 
-14. **Programmatic Specialist**: **Percy Programmatic**
+14. **Programmatic Specialist**: **Raj Programmatic**
     - Real-time bidding and audience targeting implementation
-    - "Percy precisely positions programmatic placements"
+    - "Raj optimizes campaigns in real-time for maximum efficiency"
 
-15. **Social Media Specialist**: **Sofia Social**
+15. **Social Media Specialist**: **Layla Social**
     - Platform-specific strategy and community management
-    - "Sofia strategizes stellar social scenarios"
+    - "Layla builds engaged communities around brands"
 
 ## Performance Agents
-16. **Campaign Manager**: **Carlton Controller**
+16. **Campaign Manager**: **Max Optimization**
     - Campaign setup, trafficking, and optimization
-    - "Carlton controls campaign components carefully"
+    - "Max fine-tunes campaigns to peak performance"
 
-17. **Data Analyst**: **Dana Data**
+17. **Data Analyst**: **Iris Analytics**
     - Performance data collection and insight generation
-    - "Dana deciphers data dynamically"
+    - "Iris translates complex data into actionable insights"
 
-18. **Reporting Specialist**: **Rodney Reporter**
+18. **Reporting Specialist**: **Leo Reports**
     - Dashboard creation and performance narrative development
-    - "Rodney renders revealing report renditions"
+    - "Leo presents data in ways that tell compelling stories"
 
 # Back Office Agents (Reporting to Barry)
 
 ## Financial Agents
-19. **Financial Controller**: **Felix Finance**
+19. **Financial Controller**: **Victor Finance**
     - Budget management and profitability analysis
-    - "Felix fortifies financial foundations"
+    - "Victor safeguards financial health and maximizes profitability"
 
-20. **Billing Specialist**: **Betty Billing**
+20. **Billing Specialist**: **Nora Billing**
     - Client invoice generation and payment processing
-    - "Betty balances books brilliantly"
+    - "Nora ensures smooth financial operations and timely payments"
 
 ## Operations Agents
-21. **Resource Manager**: **Rachel Resource**
+21. **Resource Manager**: **Diana Resources**
     - Capacity planning and workflow optimization
-    - "Rachel regulates resources responsibly"
+    - "Diana allocates resources with precision and foresight"
 
-22. **Vendor Manager**: **Victor Vendor**
+22. **Vendor Manager**: **Marcus Vendors**
     - Supplier relationship and contract management
-    - "Victor validates vendor valuations vigilantly"
+    - "Marcus builds strong partnerships with external providers"
 
-23. **Compliance Officer**: **Cedric Compliance**
+23. **Compliance Officer**: **Evelyn Compliance**
     - Regulatory adherence and risk assessment
-    - "Cedric confirms compliance conscientiously"
+    - "Evelyn protects the agency from regulatory and legal risks"
 
-24. **Technical Support Specialist**: **Tina Technician**
+24. **Technical Support Specialist**: **Aiden Systems**
     - System maintenance and technical troubleshooting
-    - "Tina tackles technical tribulations thoughtfully"
+    - "Aiden keeps technological infrastructure running smoothly"
 
 # Knowledge Management Agents
 
-25. **Learning Specialist**: **Lily Learner**
+25. **Learning Specialist**: **Sophia Knowledge**
     - Best practice documentation and knowledge management
-    - "Lily leverages lessons learned logically"
+    - "Sophia transforms experience into organizational wisdom"
 
-26. **Innovation Scout**: **Isaac Innovator**
+26. **Innovation Scout**: **Noah Innovation**
     - New technology evaluation and process improvement
-    - "Isaac identifies innovative ideas intuitively"
+    - "Noah identifies emerging technologies that create competitive advantage"
 
 ---
 
 # Agent Name Quick Reference
 
 ## Front Office (Faz's Team)
-- Morgan Metrics (Market Analyst)
-- Brenda Blueprint (Brand Strategist)
-- Alex Audience (Audience Specialist)
-- Casey Campaign (Campaign Strategist)
-- Damon Deal (Business Developer)
-- Alicia Advocate (Account Director)
-- Penny Planner (Project Coordinator)
+- Maya Markets (Market Analyst)
+- Simon Strategy (Brand Strategist)
+- Olivia Audience (Audience Specialist)
+- Carlos Campaign (Campaign Strategist)
+- Derek Development (Business Developer)
+- Elena Account (Account Director)
+- Theo Timeline (Project Coordinator)
 
 ## Middle Office (Mindy's Team)
-- Colton Concept (Creative Director)
-- Wendy Wordsmith (Copywriter)
-- Vincent Visual (Art Director)
-- Paige Producer (Content Producer)
-- Milo Media (Media Planner)
-- Bianca Buyer (Media Buyer)
-- Percy Programmatic (Programmatic Specialist)
-- Sofia Social (Social Media Specialist)
-- Carlton Controller (Campaign Manager)
-- Dana Data (Data Analyst)
-- Rodney Reporter (Reporting Specialist)
+- Lucas Creative (Creative Director)
+- Nina Words (Copywriter)
+- Marcus Visual (Art Director)
+- Sophia Production (Content Producer)
+- James Planning (Media Planner)
+- Zara Buys (Media Buyer)
+- Raj Programmatic (Programmatic Specialist)
+- Layla Social (Social Media Specialist)
+- Max Optimization (Campaign Manager)
+- Iris Analytics (Data Analyst)
+- Leo Reports (Reporting Specialist)
 
 ## Back Office (Barry's Team)
-- Felix Finance (Financial Controller)
-- Betty Billing (Billing Specialist)
-- Rachel Resource (Resource Manager)
-- Victor Vendor (Vendor Manager)
-- Cedric Compliance (Compliance Officer)
-- Tina Technician (Technical Support Specialist)
+- Victor Finance (Financial Controller)
+- Nora Billing (Billing Specialist)
+- Diana Resources (Resource Manager)
+- Marcus Vendors (Vendor Manager)
+- Evelyn Compliance (Compliance Officer)
+- Aiden Systems (Technical Support Specialist)
 
 ## Knowledge Management
-- Lily Learner (Learning Specialist)
-- Isaac Innovator (Innovation Scout)
+- Sophia Knowledge (Learning Specialist)
+- Noah Innovation (Innovation Scout)
