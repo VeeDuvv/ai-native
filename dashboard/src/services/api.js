@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file helps our website talk to the server where all our data is stored.
-# It's like a messenger that knows how to ask for information and send back answers.
+// Fifth Grade Explanation:
+// This file helps our website talk to the server where all our data is stored.
+// It's like a messenger that knows how to ask for information and send back answers.
 
-# High School Explanation:
-# This module provides a centralized API client for communicating with the backend.
-# It handles authentication headers, request formatting, response parsing, and error handling
-# to provide a consistent interface for all API interactions throughout the application.
+// High School Explanation:
+// This module provides a centralized API client for communicating with the backend.
+// It handles authentication headers, request formatting, response parsing, and error handling
+// to provide a consistent interface for all API interactions throughout the application.
 
 import axios from 'axios';
 

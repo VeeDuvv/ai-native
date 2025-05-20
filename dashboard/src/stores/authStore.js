@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file keeps track of whether a user is logged in or not. It remembers
-# information about the user across the whole app.
+// Fifth Grade Explanation:
+// This file keeps track of whether a user is logged in or not. It remembers
+// information about the user across the whole app.
 
-# High School Explanation:
-# This module implements a global state store for authentication using Zustand.
-# It manages the user's authentication state, login/logout operations, token storage
-# and verification, and user profile data across the entire application.
+// High School Explanation:
+// This module implements a global state store for authentication using Zustand.
+// It manages the user's authentication state, login/logout operations, token storage
+// and verification, and user profile data across the entire application.
 
 import { create } from 'zustand';
 import apiService from '../services/api';

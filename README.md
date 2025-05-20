@@ -25,16 +25,53 @@ Our vision is to revolutionize the advertising industry by building a truly AI-n
 - `docs/`: Documentation for architecture, planning, and processes
   - `architecture/`: System architecture and component design
   - `planning/`: Development roadmap and planning documents
-- `src/`: Source code for the platform (coming soon)
+- `src/`: Source code for the platform
+  - `agent_framework/`: Core agent framework implementation
+    - `communication/`: Agent communication protocols and examples
+    - `core/`: Base agent classes and interfaces
+    - `metrics/`: Observability and metrics collection
+  - `api_layer/`: API layer implementation
+  - `tisit/`: This Is What It Is - Knowledge graph system
+    - Entity-based knowledge representation
+    - Relationship modeling
+    - Knowledge storage and retrieval
+    - Agent integration interfaces
 
 ## Current Status
 
-This project is in early development. We are currently:
+This project is in active development. We have implemented:
 
-1. Defining core architecture
-2. Planning MVP development
-3. Designing agent framework
-4. Creating API specifications
+1. Core agent framework architecture
+2. Specialized agent types (Strategy, Creative, Media, Analytics, Client Communication)
+3. Client-facing dashboard
+4. Campaign analytics system
+5. TISIT knowledge graph for collective intelligence
+   - Entity-based knowledge representation
+   - Knowledge graph with relationship modeling
+   - REST API for programmatic access
+   - Interactive knowledge graph visualization dashboard
+6. Security and compliance features
+
+## Running the TISIT Knowledge Graph
+
+### Start the API Server
+
+```bash
+# Start the TISIT API server
+python -m src.tisit.api_server --host localhost --port 8000
+```
+
+### Start the Dashboard
+
+```bash
+# Install dependencies
+npm install
+
+# Start the dashboard development server
+npm run start:dashboard
+```
+
+Then open your browser to http://localhost:3000 to access the knowledge graph dashboard.
 
 ## License
 

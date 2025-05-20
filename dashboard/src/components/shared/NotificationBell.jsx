@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates a notification bell icon that shows you when you have new messages
-# or alerts. It counts how many notifications you have and lets you click to see them.
+// Fifth Grade Explanation:
+// This file creates a notification bell icon that shows you when you have new messages
+// or alerts. It counts how many notifications you have and lets you click to see them.
 
-# High School Explanation:
-# This component renders a notification bell with a badge counter for unread notifications.
-# It manages the notification list, mark-as-read functionality, and integrates with the
-# WebSocket system to display real-time updates to the user.
+// High School Explanation:
+// This component renders a notification bell with a badge counter for unread notifications.
+// It manages the notification list, mark-as-read functionality, and integrates with the
+// WebSocket system to display real-time updates to the user.
 
 import { useState, useEffect, useRef } from 'react';
 import { RiNotification3Line, RiCloseLine, RiCheckLine } from 'react-icons/ri';

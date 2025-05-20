@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates a page that shows up when someone tries to visit a part of
-# the website that doesn't exist, like typing the wrong address.
+// Fifth Grade Explanation:
+// This file creates a page that shows up when someone tries to visit a part of
+// the website that doesn't exist, like typing the wrong address.
 
-# High School Explanation:
-# This component implements a 404 Not Found error page that displays when a user
-# navigates to a route that doesn't exist in the application. It provides a
-# friendly error message and navigation options to return to valid parts of the app.
+// High School Explanation:
+// This component implements a 404 Not Found error page that displays when a user
+// navigates to a route that doesn't exist in the application. It provides a
+// friendly error message and navigation options to return to valid parts of the app.
 
 import { Link } from 'react-router-dom';
 

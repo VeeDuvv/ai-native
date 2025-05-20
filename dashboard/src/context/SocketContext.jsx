@@ -1,15 +1,15 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file helps different parts of our website talk to each other using
-# special messages that arrive instantly, instead of having to ask for updates.
+// Fifth Grade Explanation:
+// This file helps different parts of our website talk to each other using
+// special messages that arrive instantly, instead of having to ask for updates.
 
-# High School Explanation:
-# This module creates a React Context for WebSocket functionality, making realtime
-# communication available throughout the application. It manages the WebSocket connection
-# lifecycle, authentication state, and provides hooks for components to subscribe to
-# specific event types.
+// High School Explanation:
+// This module creates a React Context for WebSocket functionality, making realtime
+// communication available throughout the application. It manages the WebSocket connection
+// lifecycle, authentication state, and provides hooks for components to subscribe to
+// specific event types.
 
 import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
 import { useAuthStore } from '../stores/authStore';

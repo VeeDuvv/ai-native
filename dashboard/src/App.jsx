@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file is like the map of our website. It decides what pages to show when
-# you click on different links or buttons on the dashboard.
+// Fifth Grade Explanation:
+// This file is like the map of our website. It decides what pages to show when
+// you click on different links or buttons on the dashboard.
 
-# High School Explanation:
-# This is the main application component that sets up routing for the dashboard.
-# It handles authentication state, protected routes, and renders the appropriate 
-# layouts and pages based on the user's navigation and authentication status.
+// High School Explanation:
+// This is the main application component that sets up routing for the dashboard.
+// It handles authentication state, protected routes, and renders the appropriate 
+// layouts and pages based on the user's navigation and authentication status.
 
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';

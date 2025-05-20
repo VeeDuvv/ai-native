@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates the main frame of our dashboard - with the menu on the side,
-# the header at the top, and a space in the middle for the different pages.
+// Fifth Grade Explanation:
+// This file creates the main frame of our dashboard - with the menu on the side,
+// the header at the top, and a space in the middle for the different pages.
 
-# High School Explanation:
-# This component provides the main layout structure for all dashboard pages.
-# It includes the sidebar navigation, header with user controls, and content area
-# where different page components will be rendered based on the current route.
+// High School Explanation:
+// This component provides the main layout structure for all dashboard pages.
+// It includes the sidebar navigation, header with user controls, and content area
+// where different page components will be rendered based on the current route.
 
 import { useState, useEffect } from 'react';
 import { Outlet, NavLink, useNavigate, useLocation } from 'react-router-dom';

@@ -2,236 +2,198 @@
 # Copyright (c) 2025 Vamsi Duvvuri
 
 # Fifth Grade Explanation:
-# This file defines what information we collect about important ideas and things in our project.
-# It's like a special form that we fill out for each piece of knowledge we want to remember.
+# This file defines what a "piece of knowledge" looks like in our system.
+# It's like creating a form that helps us store information in an organized way.
 
 # High School Explanation:
-# This module implements the Entity class, which represents a single knowledge entity in
-# the TISIT knowledge graph. It provides the data structure, validation, and methods for
-# managing individual pieces of knowledge within our second brain implementation.
+# This module defines the Entity class, which represents a discrete unit of knowledge
+# within the TISIT system. Entities encapsulate metadata, descriptions, tags, and references
+# to form the building blocks of the knowledge graph.
 
-from datetime import datetime
-from typing import Dict, List, Optional, Union, Any
-import json
 import uuid
+import datetime
+from typing import Dict, List, Optional, Any, Set
+
 
 class Entity:
-    """Represents a knowledge entity in the TISIT system.
+    """
+    Represents a discrete unit of knowledge within the TISIT system.
     
-    An entity can be a framework, package, concept, person, company, or term.
-    Each entity has properties like name, type, descriptions, and relationships
-    to other entities.
+    Entities are the primary building blocks of the knowledge graph, representing
+    concepts, frameworks, strategies, campaigns, or any other discrete knowledge element.
     """
     
-    VALID_TYPES = [
-        "framework", "package", "concept", "person", "company", "term",
-        "methodology", "technology", "process", "metric", "standard"
-    ]
+    VALID_TYPES = {
+        # Marketing concepts
+        'campaign', 'audience_segment', 'creative_approach', 'channel', 
+        'strategy', 'metric', 'brand', 'message', 'asset',
+        
+        # General knowledge types
+        'concept', 'framework', 'person', 'company', 'product', 'technology',
+        'methodology', 'process', 'standard', 'term', 'package'
+    }
     
-    def __init__(self, 
-                 name: str, 
-                 entity_type: str,
-                 short_description: str,
-                 detailed_description: Optional[str] = None,
-                 entity_id: Optional[str] = None,
-                 tags: Optional[List[str]] = None,
-                 first_encountered: Optional[str] = None,
-                 last_updated: Optional[str] = None,
-                 metadata: Optional[Dict[str, Any]] = None,
-                 references: Optional[List[Dict[str, str]]] = None,
-                 links: Optional[List[Dict[str, str]]] = None) -> None:
-        """Initialize a new knowledge entity.
+    def __init__(
+        self,
+        name: str,
+        entity_type: str,
+        short_description: str = "",
+        detailed_description: str = "",
+        tags: Optional[List[str]] = None,
+        domain: Optional[str] = None,
+        created_by: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        entity_id: Optional[str] = None
+    ):
+        """
+        Initialize a new Entity instance.
         
         Args:
             name: The name of the entity
-            entity_type: The type of entity (must be one of VALID_TYPES)
-            short_description: A one-sentence summary of the entity
-            detailed_description: A comprehensive explanation (optional)
-            entity_id: A unique identifier (generated if not provided)
-            tags: A list of tags associated with this entity
-            first_encountered: When this entity was first added (ISO-8601)
-            last_updated: When this entity was last modified (ISO-8601)
-            metadata: Additional metadata for the entity
-            references: List of references to this entity
-            links: Relationships to other entities
+            entity_type: The type of entity (must be in VALID_TYPES)
+            short_description: A brief description of the entity
+            detailed_description: An in-depth description
+            tags: List of tags for categorization
+            domain: The primary domain this entity belongs to
+            created_by: Identifier of the creator (user, agent, etc.)
+            metadata: Additional custom metadata as key-value pairs
+            entity_id: Unique identifier (generated if not provided)
         """
-        # Validate entity type
         if entity_type not in self.VALID_TYPES:
-            raise ValueError(
-                f"Invalid entity type: {entity_type}. Must be one of: {', '.join(self.VALID_TYPES)}"
-            )
-            
-        # Required fields
-        self.name = name
-        self.type = entity_type
-        self.short_description = short_description
+            raise ValueError(f"Entity type '{entity_type}' is not valid. "
+                           f"Valid types are: {', '.join(sorted(self.VALID_TYPES))}")
         
-        # Optional fields with defaults
         self.id = entity_id or str(uuid.uuid4())
-        self.detailed_description = detailed_description or ""
+        self.name = name
+        self.entity_type = entity_type
+        self.short_description = short_description
+        self.detailed_description = detailed_description
         self.tags = tags or []
-        self.first_encountered = first_encountered or datetime.now().isoformat()
-        self.last_updated = last_updated or datetime.now().isoformat()
+        self.domain = domain
+        self.created_by = created_by
+        self.created_at = datetime.datetime.now().isoformat()
+        self.updated_at = self.created_at
         self.metadata = metadata or {}
-        self.references = references or []
-        self.links = links or []
+        self.relationships = {}  # Dict[entity_id, relationship_type]
+        self.references = []  # List of external references/sources
     
     def add_tag(self, tag: str) -> None:
-        """Add a tag to the entity if it doesn't already exist.
-        
-        Args:
-            tag: The tag to add
-        """
+        """Add a tag to the entity if it doesn't already exist."""
         if tag not in self.tags:
             self.tags.append(tag)
             self._update_timestamp()
-            
+    
     def remove_tag(self, tag: str) -> None:
-        """Remove a tag from the entity if it exists.
-        
-        Args:
-            tag: The tag to remove
-        """
+        """Remove a tag from the entity if it exists."""
         if tag in self.tags:
             self.tags.remove(tag)
             self._update_timestamp()
     
-    def add_link(self, target_id: str, relation_type: str, description: Optional[str] = None) -> None:
-        """Add a relationship link to another entity.
-        
-        Args:
-            target_id: The ID of the target entity
-            relation_type: The type of relationship (depends_on, created_by, etc.)
-            description: Optional description of the relationship
-        """
-        link = {
-            "relation_type": relation_type,
-            "target_id": target_id,
-            "description": description or ""
-        }
-        
-        # Check if the exact same link already exists
-        for existing_link in self.links:
-            if (existing_link["target_id"] == target_id and 
-                existing_link["relation_type"] == relation_type):
-                return  # Link already exists, don't add it again
-                
-        self.links.append(link)
+    def update_description(self, short: Optional[str] = None, detailed: Optional[str] = None) -> None:
+        """Update the entity's descriptions."""
+        if short is not None:
+            self.short_description = short
+        if detailed is not None:
+            self.detailed_description = detailed
         self._update_timestamp()
     
-    def remove_link(self, target_id: str, relation_type: Optional[str] = None) -> None:
-        """Remove a relationship link to another entity.
+    def add_reference(self, reference: Dict[str, str]) -> None:
+        """
+        Add an external reference to the entity.
         
         Args:
-            target_id: The ID of the target entity
-            relation_type: Optional relation type to be more specific
+            reference: Dict containing reference data (url, title, etc.)
         """
-        original_length = len(self.links)
-        
-        if relation_type:
-            self.links = [link for link in self.links if not 
-                         (link["target_id"] == target_id and link["relation_type"] == relation_type)]
-        else:
-            self.links = [link for link in self.links if link["target_id"] != target_id]
-            
-        if len(self.links) != original_length:
-            self._update_timestamp()
-    
-    def add_reference(self, location: str, ref_type: str = "external", context: Optional[str] = None) -> None:
-        """Add a reference to this entity.
-        
-        Args:
-            location: The file path or URL of the reference
-            ref_type: The type of reference (internal or external)
-            context: Optional context about how/where this was referenced
-        """
-        reference = {
-            "type": ref_type,
-            "location": location,
-            "context": context or ""
-        }
-        
         self.references.append(reference)
         self._update_timestamp()
     
-    def update_metadata(self, key: str, value: Any) -> None:
-        """Update or add a metadata field.
-        
-        Args:
-            key: The metadata key
-            value: The metadata value
-        """
+    def add_metadata(self, key: str, value: Any) -> None:
+        """Add or update metadata for the entity."""
         self.metadata[key] = value
         self._update_timestamp()
     
+    def remove_metadata(self, key: str) -> None:
+        """Remove metadata if it exists."""
+        if key in self.metadata:
+            del self.metadata[key]
+            self._update_timestamp()
+    
+    def add_relationship(self, target_id: str, relation_type: str) -> None:
+        """Record a relationship to another entity."""
+        self.relationships[target_id] = relation_type
+        self._update_timestamp()
+    
+    def remove_relationship(self, target_id: str) -> None:
+        """Remove a relationship if it exists."""
+        if target_id in self.relationships:
+            del self.relationships[target_id]
+            self._update_timestamp()
+    
     def _update_timestamp(self) -> None:
-        """Update the last_updated timestamp to the current time."""
-        self.last_updated = datetime.now().isoformat()
+        """Update the entity's last modified timestamp."""
+        self.updated_at = datetime.datetime.now().isoformat()
     
     def to_dict(self) -> Dict[str, Any]:
-        """Convert the entity to a dictionary representation.
-        
-        Returns:
-            A dictionary containing all entity properties
-        """
+        """Convert the entity to a dictionary for serialization."""
         return {
             "id": self.id,
             "name": self.name,
-            "type": self.type,
+            "entity_type": self.entity_type,
             "short_description": self.short_description,
             "detailed_description": self.detailed_description,
-            "first_encountered": self.first_encountered,
-            "last_updated": self.last_updated,
             "tags": self.tags,
-            "links": self.links,
+            "domain": self.domain,
+            "created_by": self.created_by,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
             "metadata": self.metadata,
+            "relationships": self.relationships,
             "references": self.references
         }
-    
-    def to_json(self, indent: int = 2) -> str:
-        """Convert the entity to a JSON string.
         
-        Args:
-            indent: Number of spaces for indentation
-            
-        Returns:
-            A JSON string representation of the entity
-        """
-        return json.dumps(self.to_dict(), indent=indent)
+    def to_json(self) -> str:
+        """Convert the entity to a JSON string."""
+        import json
+        return json.dumps(self.to_dict(), indent=2)
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Entity':
-        """Create an Entity instance from a dictionary.
-        
-        Args:
-            data: Dictionary containing entity properties
-            
-        Returns:
-            A new Entity instance
-        """
-        return cls(
+        """Create an Entity instance from a dictionary."""
+        entity = cls(
             name=data["name"],
-            entity_type=data["type"],
-            short_description=data["short_description"],
-            detailed_description=data.get("detailed_description"),
-            entity_id=data.get("id"),
-            tags=data.get("tags"),
-            first_encountered=data.get("first_encountered"),
-            last_updated=data.get("last_updated"),
-            metadata=data.get("metadata"),
-            references=data.get("references"),
-            links=data.get("links")
+            entity_type=data["entity_type"],
+            short_description=data.get("short_description", ""),
+            detailed_description=data.get("detailed_description", ""),
+            tags=data.get("tags", []),
+            domain=data.get("domain"),
+            created_by=data.get("created_by"),
+            metadata=data.get("metadata", {}),
+            entity_id=data["id"]
         )
-    
+        
+        # Set timestamps directly
+        entity.created_at = data.get("created_at", entity.created_at)
+        entity.updated_at = data.get("updated_at", entity.updated_at)
+        
+        # Set relationships and references
+        entity.relationships = data.get("relationships", {})
+        entity.references = data.get("references", [])
+        
+        return entity
+        
     @classmethod
     def from_json(cls, json_str: str) -> 'Entity':
-        """Create an Entity instance from a JSON string.
-        
-        Args:
-            json_str: JSON string representing an entity
-            
-        Returns:
-            A new Entity instance
-        """
+        """Create an Entity instance from a JSON string."""
+        import json
         data = json.loads(json_str)
         return cls.from_dict(data)
+    
+    def __str__(self) -> str:
+        """String representation of the entity."""
+        return f"{self.name} ({self.entity_type}): {self.short_description}"
+    
+    def __eq__(self, other) -> bool:
+        """Compare entities by their ID."""
+        if not isinstance(other, Entity):
+            return False
+        return self.id == other.id

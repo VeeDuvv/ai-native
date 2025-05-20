@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates a card that shows important information about one advertising
-# campaign, like its name, how much money is spent, and how well it's doing.
+// Fifth Grade Explanation:
+// This file creates a card that shows important information about one advertising
+// campaign, like its name, how much money is spent, and how well it's doing.
 
-# High School Explanation:
-# This component renders a card displaying campaign information including name,
-# status, budget metrics, and key performance indicators. It visualizes campaign
-# progress and provides quick navigation to detailed campaign information.
+// High School Explanation:
+// This component renders a card displaying campaign information including name,
+// status, budget metrics, and key performance indicators. It visualizes campaign
+// progress and provides quick navigation to detailed campaign information.
 
 import { Link } from 'react-router-dom';
 

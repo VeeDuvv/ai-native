@@ -120,7 +120,7 @@ class Error(BaseAPIModel):
     )
 
 
-class StandardRequest(Generic[T], BaseAPIModel):
+class StandardRequest(BaseAPIModel, Generic[T]):
     """Standard request structure for API endpoints."""
     
     data: T = Field(
@@ -133,7 +133,7 @@ class StandardRequest(Generic[T], BaseAPIModel):
     )
 
 
-class StandardResponse(Generic[T], BaseAPIModel):
+class StandardResponse(BaseAPIModel, Generic[T]):
     """Standard response structure for API endpoints."""
     
     data: Optional[T] = Field(
@@ -158,7 +158,7 @@ class StandardResponse(Generic[T], BaseAPIModel):
     )
 
 
-class PaginatedResponse(Generic[T], BaseAPIModel):
+class PaginatedResponse(BaseAPIModel, Generic[T]):
     """Standard response structure for paginated collections."""
     
     data: List[T] = Field(

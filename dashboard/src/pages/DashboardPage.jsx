@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates the main dashboard page that shows a summary of all your
-# advertising campaigns, including how they're performing and what needs attention.
+// Fifth Grade Explanation:
+// This file creates the main dashboard page that shows a summary of all your
+// advertising campaigns, including how they're performing and what needs attention.
 
-# High School Explanation:
-# This component implements the main dashboard overview page with key performance
-# metrics, campaign status summaries, and activity feeds. It shows aggregated data
-# from multiple campaigns and highlights items requiring client attention or approval.
+// High School Explanation:
+// This component implements the main dashboard overview page with key performance
+// metrics, campaign status summaries, and activity feeds. It shows aggregated data
+// from multiple campaigns and highlights items requiring client attention or approval.
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';

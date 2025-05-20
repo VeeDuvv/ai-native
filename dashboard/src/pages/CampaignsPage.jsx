@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates a page that shows a list of all your advertising campaigns,
-# so you can see which ones are active and how they're doing.
+// Fifth Grade Explanation:
+// This file creates a page that shows a list of all your advertising campaigns,
+// so you can see which ones are active and how they're doing.
 
-# High School Explanation:
-# This component implements the campaigns list page where users can view all their
-# campaigns with filtering and sorting capabilities. It displays campaign cards in a 
-# grid layout with search functionality and status filtering options.
+// High School Explanation:
+// This component implements the campaigns list page where users can view all their
+// campaigns with filtering and sorting capabilities. It displays campaign cards in a 
+// grid layout with search functionality and status filtering options.
 
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';

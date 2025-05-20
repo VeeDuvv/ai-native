@@ -1,15 +1,15 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file keeps track of things that need to be approved, like new ad designs.
-# It remembers which items need approval, which ones are already approved or rejected,
-# and helps other parts of the app know what to show.
+// Fifth Grade Explanation:
+// This file keeps track of things that need to be approved, like new ad designs.
+// It remembers which items need approval, which ones are already approved or rejected,
+// and helps other parts of the app know what to show.
 
-# High School Explanation:
-# This module implements a global state store for approval workflows using Zustand.
-# It manages pending approvals, approval history, and the approval process workflow,
-# centralizing approval data and operations across the application.
+// High School Explanation:
+// This module implements a global state store for approval workflows using Zustand.
+// It manages pending approvals, approval history, and the approval process workflow,
+// centralizing approval data and operations across the application.
 
 import { create } from 'zustand';
 import apiService from '../services/api';

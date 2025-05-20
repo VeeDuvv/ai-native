@@ -2,204 +2,167 @@
 # Copyright (c) 2025 Vamsi Duvvuri
 
 # Fifth Grade Explanation:
-# This file helps us connect different pieces of knowledge together, like showing that
-# one idea is related to another idea. It's like drawing lines between important things
-# to show how they are connected.
+# This file helps us connect pieces of knowledge together, like explaining
+# that a dog is a type of pet, or that rain comes from clouds.
 
 # High School Explanation:
-# This module implements the Relationship class, which represents the connections
-# between knowledge entities in the TISIT graph. It defines the structure, types,
-# and properties of relationships, as well as methods for creating and managing them.
+# This module defines the Relationship class, which represents connections between
+# entities in the TISIT knowledge graph. It allows for typed, directed relationships
+# with metadata and bidirectional traversal capabilities.
 
-from typing import Dict, List, Optional, Any
-from datetime import datetime
-import json
 import uuid
+import datetime
+from typing import Dict, Optional, Any, List
+
 
 class Relationship:
-    """Represents a relationship between two entities in the TISIT knowledge graph.
+    """
+    Represents a typed, directed relationship between two entities in the knowledge graph.
     
-    Relationships are directed connections between entities with specific types
-    and optional properties.
+    Relationships are the connections that give the knowledge graph its structure and
+    allow for traversal, inference, and context building.
     """
     
-    VALID_TYPES = [
-        "depends_on", "created_by", "similar_to", "part_of", "uses", 
-        "implements", "extends", "supersedes", "related_to", "contains",
-        "alternative_to", "inspires", "derived_from", "successor_of",
-        "predecessor_of", "competes_with", "complements", "integrates_with"
-    ]
+    # Standard relationship types with their inverse mappings
+    RELATIONSHIP_TYPES = {
+        # Hierarchical relationships
+        'is_a': 'has_type',
+        'part_of': 'contains',
+        'instance_of': 'has_instance',
+        
+        # Dependency relationships
+        'depends_on': 'enables',
+        'requires': 'required_by',
+        'uses': 'used_by',
+        
+        # Influence relationships
+        'affects': 'affected_by',
+        'influences': 'influenced_by',
+        'created_by': 'created',
+        
+        # Similarity relationships
+        'similar_to': 'similar_to',  # Symmetric
+        'alternative_to': 'alternative_to',  # Symmetric
+        
+        # Marketing-specific relationships
+        'targets': 'targeted_by',
+        'performs_well_on': 'suitable_for',
+        'measured_by': 'measures',
+        'increases': 'increased_by',
+        'decreases': 'decreased_by',
+        'correlates_with': 'correlates_with',  # Symmetric
+        'competing_with': 'competing_with',  # Symmetric
+    }
     
-    def __init__(self, 
-                 source_id: str,
-                 target_id: str,
-                 relation_type: str,
-                 description: Optional[str] = None,
-                 relationship_id: Optional[str] = None,
-                 properties: Optional[Dict[str, Any]] = None,
-                 bidirectional: bool = False,
-                 created_at: Optional[str] = None,
-                 last_updated: Optional[str] = None) -> None:
-        """Initialize a new relationship between entities.
+    # Add inverse mappings automatically
+    for rel, inv in list(RELATIONSHIP_TYPES.items()):
+        if inv not in RELATIONSHIP_TYPES:
+            RELATIONSHIP_TYPES[inv] = rel
+    
+    def __init__(
+        self,
+        source_id: str,
+        target_id: str,
+        relation_type: str,
+        description: str = "",
+        weight: float = 1.0,
+        metadata: Optional[Dict[str, Any]] = None,
+        relationship_id: Optional[str] = None
+    ):
+        """
+        Initialize a new Relationship instance.
         
         Args:
             source_id: ID of the source entity
             target_id: ID of the target entity
-            relation_type: Type of relationship (must be one of VALID_TYPES)
+            relation_type: Type of relationship (must be in RELATIONSHIP_TYPES)
             description: Optional description of the relationship
+            weight: Strength or importance of the relationship (0.0 to 1.0)
+            metadata: Additional custom metadata
             relationship_id: Unique identifier (generated if not provided)
-            properties: Additional properties for the relationship
-            bidirectional: Whether the relationship applies equally in both directions
-            created_at: When the relationship was created (ISO-8601)
-            last_updated: When the relationship was last modified (ISO-8601)
         """
-        # Validate relationship type
-        if relation_type not in self.VALID_TYPES:
-            raise ValueError(
-                f"Invalid relationship type: {relation_type}. Must be one of: {', '.join(self.VALID_TYPES)}"
-            )
-            
-        # Required fields
+        if relation_type not in self.RELATIONSHIP_TYPES:
+            raise ValueError(f"Relationship type '{relation_type}' is not valid. "
+                           f"Valid types are: {', '.join(sorted(self.RELATIONSHIP_TYPES))}")
+        
+        self.id = relationship_id or str(uuid.uuid4())
         self.source_id = source_id
         self.target_id = target_id
-        self.type = relation_type
-        
-        # Optional fields with defaults
-        self.id = relationship_id or str(uuid.uuid4())
-        self.description = description or ""
-        self.properties = properties or {}
-        self.bidirectional = bidirectional
-        self.created_at = created_at or datetime.now().isoformat()
-        self.last_updated = last_updated or datetime.now().isoformat()
+        self.relation_type = relation_type
+        self.description = description
+        self.weight = max(0.0, min(1.0, weight))  # Clamp between 0 and 1
+        self.created_at = datetime.datetime.now().isoformat()
+        self.updated_at = self.created_at
+        self.metadata = metadata or {}
     
-    def update_property(self, key: str, value: Any) -> None:
-        """Set or update a property of the relationship.
-        
-        Args:
-            key: The property name
-            value: The property value
-        """
-        self.properties[key] = value
+    def update_weight(self, weight: float) -> None:
+        """Update the relationship's weight, clamping between 0 and 1."""
+        self.weight = max(0.0, min(1.0, weight))
         self._update_timestamp()
     
-    def remove_property(self, key: str) -> bool:
-        """Remove a property from the relationship.
-        
-        Args:
-            key: The property name to remove
-            
-        Returns:
-            True if the property existed and was removed, False otherwise
-        """
-        if key in self.properties:
-            del self.properties[key]
-            self._update_timestamp()
-            return True
-        return False
-    
     def update_description(self, description: str) -> None:
-        """Update the relationship description.
-        
-        Args:
-            description: The new description
-        """
+        """Update the relationship's description."""
         self.description = description
         self._update_timestamp()
     
-    def set_bidirectional(self, bidirectional: bool) -> None:
-        """Set whether the relationship is bidirectional.
-        
-        Args:
-            bidirectional: True if the relationship applies equally in both directions
-        """
-        self.bidirectional = bidirectional
+    def add_metadata(self, key: str, value: Any) -> None:
+        """Add or update metadata for the relationship."""
+        self.metadata[key] = value
         self._update_timestamp()
     
+    def remove_metadata(self, key: str) -> None:
+        """Remove metadata if it exists."""
+        if key in self.metadata:
+            del self.metadata[key]
+            self._update_timestamp()
+    
+    def get_inverse_type(self) -> str:
+        """Get the inverse relationship type."""
+        return self.RELATIONSHIP_TYPES.get(self.relation_type, "related_to")
+    
     def _update_timestamp(self) -> None:
-        """Update the last_updated timestamp to the current time."""
-        self.last_updated = datetime.now().isoformat()
+        """Update the relationship's last modified timestamp."""
+        self.updated_at = datetime.datetime.now().isoformat()
     
     def to_dict(self) -> Dict[str, Any]:
-        """Convert the relationship to a dictionary representation.
-        
-        Returns:
-            A dictionary containing all relationship properties
-        """
+        """Convert the relationship to a dictionary for serialization."""
         return {
             "id": self.id,
             "source_id": self.source_id,
             "target_id": self.target_id,
-            "type": self.type,
+            "relation_type": self.relation_type,
             "description": self.description,
-            "properties": self.properties,
-            "bidirectional": self.bidirectional,
+            "weight": self.weight,
             "created_at": self.created_at,
-            "last_updated": self.last_updated
+            "updated_at": self.updated_at,
+            "metadata": self.metadata
         }
-    
-    def to_json(self, indent: int = 2) -> str:
-        """Convert the relationship to a JSON string.
-        
-        Args:
-            indent: Number of spaces for indentation
-            
-        Returns:
-            A JSON string representation of the relationship
-        """
-        return json.dumps(self.to_dict(), indent=indent)
     
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> 'Relationship':
-        """Create a Relationship instance from a dictionary.
-        
-        Args:
-            data: Dictionary containing relationship properties
-            
-        Returns:
-            A new Relationship instance
-        """
-        return cls(
+        """Create a Relationship instance from a dictionary."""
+        relationship = cls(
             source_id=data["source_id"],
             target_id=data["target_id"],
-            relation_type=data["type"],
-            description=data.get("description"),
-            relationship_id=data.get("id"),
-            properties=data.get("properties"),
-            bidirectional=data.get("bidirectional", False),
-            created_at=data.get("created_at"),
-            last_updated=data.get("last_updated")
+            relation_type=data["relation_type"],
+            description=data.get("description", ""),
+            weight=data.get("weight", 1.0),
+            metadata=data.get("metadata", {}),
+            relationship_id=data["id"]
         )
+        
+        # Set timestamps directly
+        relationship.created_at = data.get("created_at", relationship.created_at)
+        relationship.updated_at = data.get("updated_at", relationship.updated_at)
+        
+        return relationship
     
-    @classmethod
-    def from_json(cls, json_str: str) -> 'Relationship':
-        """Create a Relationship instance from a JSON string.
-        
-        Args:
-            json_str: JSON string representing a relationship
-            
-        Returns:
-            A new Relationship instance
-        """
-        data = json.loads(json_str)
-        return cls.from_dict(data)
+    def __str__(self) -> str:
+        """String representation of the relationship."""
+        return f"{self.source_id} --[{self.relation_type}]--> {self.target_id}"
     
-    def get_inverse_type(self) -> Optional[str]:
-        """Get the inverse relationship type, if one exists.
-        
-        Returns:
-            The inverse relationship type, or None if no clear inverse exists
-        """
-        inverse_map = {
-            "depends_on": "required_by",
-            "part_of": "contains",
-            "contains": "part_of",
-            "created_by": "created",
-            "uses": "used_by",
-            "implements": "implemented_by",
-            "extends": "extended_by",
-            "supersedes": "superseded_by",
-            "successor_of": "predecessor_of",
-            "predecessor_of": "successor_of"
-        }
-        
-        return inverse_map.get(self.type)
+    def __eq__(self, other) -> bool:
+        """Compare relationships by their ID."""
+        if not isinstance(other, Relationship):
+            return False
+        return self.id == other.id

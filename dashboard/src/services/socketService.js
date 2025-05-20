@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file helps our website get instant updates from the server without having to
-# constantly ask for them. It's like having a walkie-talkie that's always listening.
+// Fifth Grade Explanation:
+// This file helps our website get instant updates from the server without having to
+// constantly ask for them. It's like having a walkie-talkie that's always listening.
 
-# High School Explanation:
-# This module implements a WebSocket client that maintains a persistent connection
-# with the server for real-time bidirectional communication. It handles connection
-# management, authentication, reconnection logic, and message processing.
+// High School Explanation:
+// This module implements a WebSocket client that maintains a persistent connection
+// with the server for real-time bidirectional communication. It handles connection
+// management, authentication, reconnection logic, and message processing.
 
 import { EventEmitter } from 'events';
 

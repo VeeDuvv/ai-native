@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates a detailed view of something that needs to be approved.
-# It shows all the information about the item and lets users approve or reject it.
+// Fifth Grade Explanation:
+// This file creates a detailed view of something that needs to be approved.
+// It shows all the information about the item and lets users approve or reject it.
 
-# High School Explanation:
-# This component displays detailed information about an approval request including
-# its content, metadata, and history. It provides interfaces for reviewing, commenting on,
-# and taking action (approve/reject) on the approval request with appropriate validations.
+// High School Explanation:
+// This component displays detailed information about an approval request including
+// its content, metadata, and history. It provides interfaces for reviewing, commenting on,
+// and taking action (approve/reject) on the approval request with appropriate validations.
 
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';

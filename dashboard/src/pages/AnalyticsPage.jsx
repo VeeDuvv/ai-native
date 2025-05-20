@@ -1,16 +1,16 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates a page with charts and numbers that show how well your
-# advertising campaigns are performing, like how many people clicked on ads
-# and how much money you're making.
+// Fifth Grade Explanation:
+// This file creates a page with charts and numbers that show how well your
+// advertising campaigns are performing, like how many people clicked on ads
+// and how much money you're making.
 
-# High School Explanation:
-# This component implements an analytics dashboard with performance metrics,
-# trend visualization, and campaign comparison features. It provides insights
-# into advertising effectiveness across channels and campaigns with interactive
-# data visualizations.
+// High School Explanation:
+// This component implements an analytics dashboard with performance metrics,
+// trend visualization, and campaign comparison features. It provides insights
+// into advertising effectiveness across channels and campaigns with interactive
+// data visualizations.
 
 import { useState, useEffect } from 'react';
 import axios from 'axios';

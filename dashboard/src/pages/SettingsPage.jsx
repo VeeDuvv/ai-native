@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates a page where users can change their preferences and settings
-# for the dashboard, like their password, notification preferences, and other options.
+// Fifth Grade Explanation:
+// This file creates a page where users can change their preferences and settings
+// for the dashboard, like their password, notification preferences, and other options.
 
-# High School Explanation:
-# This component implements a settings page with user profile management,
-# notification preferences, API access configuration, and dashboard customization
-# options. It handles form validation and settings persistence.
+// High School Explanation:
+// This component implements a settings page with user profile management,
+// notification preferences, API access configuration, and dashboard customization
+// options. It handles form validation and settings persistence.
 
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';

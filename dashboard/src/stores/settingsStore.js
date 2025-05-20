@@ -1,15 +1,15 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file keeps track of all the settings and preferences for your dashboard.
-# It remembers things like what colors you prefer, what notifications you want,
-# and your personal information.
+// Fifth Grade Explanation:
+// This file keeps track of all the settings and preferences for your dashboard.
+// It remembers things like what colors you prefer, what notifications you want,
+// and your personal information.
 
-# High School Explanation:
-# This module implements a global state store for user preferences and settings using Zustand.
-# It manages user profile data, notification preferences, display settings, and API access
-# configuration, providing a centralized settings management system.
+// High School Explanation:
+// This module implements a global state store for user preferences and settings using Zustand.
+// It manages user profile data, notification preferences, display settings, and API access
+// configuration, providing a centralized settings management system.
 
 import { create } from 'zustand';
 import apiService from '../services/api';

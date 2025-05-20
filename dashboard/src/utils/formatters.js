@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file helps make numbers and dates look nice on the dashboard.
-# It turns big numbers into easy-to-read formats, and makes dates look pretty.
+// Fifth Grade Explanation:
+// This file helps make numbers and dates look nice on the dashboard.
+// It turns big numbers into easy-to-read formats, and makes dates look pretty.
 
-# High School Explanation:
-# This utility module provides standardized formatting functions for various data types
-# displayed throughout the application. It ensures consistent number, currency, percentage,
-# and date formatting across all dashboard components.
+// High School Explanation:
+// This utility module provides standardized formatting functions for various data types
+// displayed throughout the application. It ensures consistent number, currency, percentage,
+// and date formatting across all dashboard components.
 
 // Format a number with commas for thousands
 export const formatNumber = (value, maximumFractionDigits = 0) => {

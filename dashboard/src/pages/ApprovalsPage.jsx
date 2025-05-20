@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates a page where clients can see what things need their approval,
-# like new ad designs or requests to change something in their campaigns.
+// Fifth Grade Explanation:
+// This file creates a page where clients can see what things need their approval,
+// like new ad designs or requests to change something in their campaigns.
 
-# High School Explanation:
-# This component displays a list of pending approval requests for creative assets,
-# budget changes, targeting modifications, and other campaign elements. It allows
-# clients to view, approve, or reject these requests with appropriate feedback.
+// High School Explanation:
+// This component displays a list of pending approval requests for creative assets,
+// budget changes, targeting modifications, and other campaign elements. It allows
+// clients to view, approve, or reject these requests with appropriate feedback.
 
 import { useState, useEffect } from 'react';
 import { Link, useParams, useNavigate } from 'react-router-dom';

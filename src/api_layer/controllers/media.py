@@ -27,7 +27,7 @@ from datetime import datetime, date
 from fastapi import APIRouter, Depends, HTTPException, Query, Body, Path, status
 from fastapi.responses import JSONResponse
 
-from src.api_layer.core.app import create_response, create_error_response
+from src.api_layer.core.responses import create_response, create_error_response
 from src.api_layer.core.auth import User, get_current_active_user, has_role
 from src.api_layer.core.agent_coordinator import coordinator
 from src.api_layer.models.base import StandardRequest, StandardResponse, PaginatedResponse

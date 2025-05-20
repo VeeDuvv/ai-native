@@ -110,10 +110,10 @@ class EntityStorage:
                 self.tag_index[tag].append(entity.id)
         
         # Update type index
-        if entity.type not in self.type_index:
-            self.type_index[entity.type] = []
-        if entity.id not in self.type_index[entity.type]:
-            self.type_index[entity.type].append(entity.id)
+        if entity.entity_type not in self.type_index:
+            self.type_index[entity.entity_type] = []
+        if entity.id not in self.type_index[entity.entity_type]:
+            self.type_index[entity.entity_type].append(entity.id)
     
     def _remove_from_indexes(self, entity: Entity) -> None:
         """Remove entity from indexes.
@@ -133,10 +133,10 @@ class EntityStorage:
                     del self.tag_index[tag]
         
         # Remove from type index
-        if entity.type in self.type_index and entity.id in self.type_index[entity.type]:
-            self.type_index[entity.type].remove(entity.id)
-            if not self.type_index[entity.type]:  # If the type has no more entities
-                del self.type_index[entity.type]
+        if entity.entity_type in self.type_index and entity.id in self.type_index[entity.entity_type]:
+            self.type_index[entity.entity_type].remove(entity.id)
+            if not self.type_index[entity.entity_type]:  # If the type has no more entities
+                del self.type_index[entity.entity_type]
     
     def save_entity(self, entity: Entity) -> None:
         """Save an entity to storage.

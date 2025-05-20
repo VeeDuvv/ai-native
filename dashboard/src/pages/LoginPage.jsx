@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates the login page where people enter their username and password
-# to access the dashboard.
+// Fifth Grade Explanation:
+// This file creates the login page where people enter their username and password
+// to access the dashboard.
 
-# High School Explanation:
-# This component implements the login page with a form for email and password
-# authentication. It handles form validation, submission, and error feedback,
-# and redirects authenticated users to the dashboard.
+// High School Explanation:
+// This component implements the login page with a form for email and password
+// authentication. It handles form validation, submission, and error feedback,
+// and redirects authenticated users to the dashboard.
 
 import { useState, useEffect } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';

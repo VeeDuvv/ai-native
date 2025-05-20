@@ -26,7 +26,7 @@ from typing import Dict, List, Optional, Any
 from fastapi import APIRouter, Depends, Query, Path, Body, status, HTTPException
 from fastapi.responses import JSONResponse
 
-from src.api_layer.core.app import create_response, create_error_response
+from src.api_layer.core.responses import create_response, create_error_response
 from src.api_layer.core.auth import User, get_current_active_user, has_role
 from src.api_layer.core.agent_coordinator import coordinator
 from src.api_layer.models.base import StandardRequest, StandardResponse

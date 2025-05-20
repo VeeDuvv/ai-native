@@ -1,268 +1,247 @@
 # SPDX-License-Identifier: MIT
 # Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file explains how TISIT will remember important words and ideas for our project.
-# It's like making a special dictionary where all the words are connected to each other
-# in a web, so we can find the information we need quickly.
+# TISIT Knowledge Graph Implementation
 
-# High School Explanation:
-# This document outlines the architecture for TISIT's knowledge graph implementation.
-# It details how we'll capture, store, and relate important terms, technologies, 
-# frameworks, and people relevant to our project to create a queryable knowledge base.
+## Overview
 
-# TISIT: Knowledge Graph Implementation
+The TISIT (This Is What It Is) Knowledge Graph serves as the collective intelligence system for our AI-native advertising agency. It provides a structured way to represent, store, and access knowledge across all agent activities, ensuring that insights and learnings are preserved and leveraged throughout the platform.
 
-## Core Concept
+## Core Components
 
-TISIT (This Is What It Is) will function as a comprehensive knowledge graph of technical terms, frameworks, packages, concepts, and people relevant to our AI-native project. By explicitly capturing and connecting these entities, we create a queryable resource that represents "what we know" and the relationships between different pieces of knowledge.
+The TISIT Knowledge Graph implementation consists of several key components:
 
-## Knowledge Entity Structure
+### 1. Entity System
 
-Each captured entity in TISIT will have the following structure:
+Entities are the primary building blocks of the knowledge graph, representing discrete units of knowledge:
 
-```json
-{
-  "id": "unique-identifier",
-  "name": "Entity Name",
-  "type": "framework|package|concept|person|company|term",
-  "short_description": "One-sentence summary",
-  "detailed_description": "Comprehensive explanation",
-  "first_encountered": "ISO-8601 date",
-  "last_updated": "ISO-8601 date",
-  "tags": ["tag1", "tag2"],
-  "links": [
-    {
-      "relation_type": "depends_on|created_by|similar_to|part_of|etc",
-      "target_id": "another-entity-id",
-      "description": "Explanation of the relationship"
-    }
-  ],
-  "metadata": {
-    "official_url": "https://example.com",
-    "documentation": "https://docs.example.com",
-    "version": "If applicable",
-    "github_url": "If applicable",
-    "custom_fields": {}
-  },
-  "references": [
-    {
-      "type": "internal|external",
-      "location": "File path or URL",
-      "context": "How/where this was referenced"
-    }
-  ]
-}
-```
+- **Entity Types**: Supports various domain-specific types such as:
+  - Marketing concepts: campaign, audience_segment, creative_approach, channel, strategy, metric, brand, message, asset
+  - General knowledge: concept, framework, person, company, product, technology, methodology, process, standard, term, package
 
-## System Components
+- **Entity Structure**:
+  - Unique identifier
+  - Name and type
+  - Short and detailed descriptions
+  - Tags for categorization
+  - Domain classification
+  - Creation and modification timestamps
+  - Metadata as flexible key-value pairs
+  - References to external sources
 
-### 1. Knowledge Capture System
+### 2. Relationship System
 
-**Automated Capture**
-- Parser that identifies potential knowledge entities in code and documentation
-- Integration with development environment to flag new terms
-- Monitoring of project communications for relevant terms
+Relationships define connections between entities, enabling a rich graph structure:
 
-**Manual Capture**
-- Simple CLI command: `tisit add <entity_name> --type <type>`
-- Web interface for adding and editing entities
-- Special comment format in code to document new entities
+- **Relationship Types**: Comprehensive set of typed relationships with bidirectional support:
+  - Hierarchical: is_a, part_of, instance_of
+  - Dependency: depends_on, requires, uses
+  - Influence: affects, influences, created_by
+  - Similarity: similar_to, alternative_to
+  - Marketing-specific: targets, performs_well_on, measured_by, increases, decreases
 
-### 2. Knowledge Storage
+- **Relationship Structure**:
+  - Source and target entity IDs
+  - Relationship type
+  - Optional description
+  - Weight (strength of relationship)
+  - Creation and update timestamps
+  - Additional metadata
 
-**Entity Database**
-- JSON document store for entity definitions
-- Full-text search capabilities
-- Version history tracking
+### 3. Knowledge Graph
 
-**Relationship Database**
-- Graph database to store connections between entities
-- Support for typed relationships
-- Bi-directional relationship traversal
+The central system that manages entities and relationships:
 
-### 3. Knowledge Retrieval
+- **Core Capabilities**:
+  - Entity and relationship management
+  - Traversal and path finding
+  - Pattern-based queries
+  - Visualization generation
+  - Graph statistics
 
-**Query Interface**
-- Simple CLI command: `tisit find <query>`
-- Natural language query processing
-- Structured query language for complex searches
+- **Implementation Details**:
+  - Uses NetworkX for graph operations
+  - Supports directed, weighted graphs
+  - Provides both programmatic and CLI interfaces
 
-**Visualization**
-- Interactive knowledge graph visualization
-- Relationship exploration tools
-- Custom views based on entity types or relationships
+### 4. Storage Layer
 
-### 4. Integration Points
+Persistent storage for the knowledge graph:
 
-**Development Environment**
-- IDE plugins to access TISIT while coding
-- Hover-over documentation from TISIT entities
-- Quick-add functionality for new terms
+- **File Organization**:
+  ```
+  /tisit/
+    /entities/
+      /frameworks/
+        /a/
+          angular.json
+      /concepts/
+        /a/
+          agent-architecture.json
+    /relationships/
+      relationship1.json
+      relationship2.json
+    /indexes/
+      term-index.json
+      relationship-index.json
+  ```
 
-**Documentation System**
-- Automatic linking of terms in documentation
-- Entity summaries embeddable in docs
-- Documentation generation from TISIT data
+- **Storage Features**:
+  - JSON-based entity and relationship storage
+  - Efficient indexing for quick lookups
+  - Directory structure for organized storage
+  - Transaction support for atomic operations
 
-**Agent Framework**
-- Knowledge source for agents
-- Context provision for decision-making
-- Learning target for new discoveries
+### 5. Agent Integration
 
-## Implementation Approach
+Specialized interfaces for agent interaction with the knowledge graph:
 
-### 1. Data Structure
+- **Agent Interface**:
+  - Simplified knowledge access for agents
+  - Specialized methods for domain-specific knowledge capture
+  - Context-aware knowledge retrieval
+  - Support for automatic knowledge enrichment
 
-**Entity Storage Format**
-- Use JSON files in a Git-tracked directory structure
-- Organize by entity type and first letter
-- One file per entity for easy diffing and updates
-
-**Relationship Representation**
-- Store relationships in both entity definitions (for simplicity)
-- Maintain a separate relationship index for efficient queries
-- Use typed edges with optional properties
-
-### 2. File Organization
-
-```
-/tisit/
-  /entities/
-    /frameworks/
-      /a/
-        angular.json
-        aws-lambda.json
-      /b/
-        bootstrap.json
-    /packages/
-      /a/
-        anthropic.json
-      /p/
-        pydantic.json
-    /people/
-      /d/
-        duvvuri-vamsi.json
-    /concepts/
-      /a/
-        agent-architecture.json
-  /indexes/
-    term-index.json
-    relationship-index.json
-    tag-index.json
-  /scripts/
-    add-entity.py
-    update-entity.py
-    query.py
-    visualize.py
-```
-
-### 3. Capture Workflow
-
-1. **Identification**: Entity is identified (manually or automatically)
-2. **Creation**: Basic entity record is created with name, type, and description
-3. **Enrichment**: Additional metadata and links are added
-4. **Validation**: Entity is checked for completeness and consistency
-5. **Publishing**: Entity is committed to the knowledge base
-6. **Indexing**: Search and relationship indexes are updated
-
-### 4. Retrieval Workflow
-
-1. **Query Formation**: User specifies search terms or criteria
-2. **Entity Matching**: System identifies relevant entities
-3. **Relationship Expansion**: Related entities are discovered
-4. **Result Ranking**: Entities are sorted by relevance
-5. **Presentation**: Results are displayed in appropriate format
-6. **Refinement**: User can filter or expand results
+- **Domain-Specific Integration**:
+  - Campaign knowledge capture and retrieval
+  - Creative concept management
+  - Media planning knowledge
+  - Performance analytics insights
 
 ## Usage Patterns
 
-### 1. Onboarding New Concepts
+### 1. Knowledge Capture
 
-When encountering a new framework, package, or concept:
+Agents can capture knowledge in several ways:
 
-```bash
-# Quick add with interactive prompts for details
-tisit add "React" --type framework
+```python
+# Basic entity creation
+entity_id = agent.knowledge_interface.store_entity(
+    name="Emotional Storytelling",
+    entity_type="creative_approach",
+    short_description="Technique that uses emotion to connect with audience",
+    tags=["creative", "storytelling", "emotion"]
+)
 
-# Add with immediate description
-tisit add "Redux" --type framework --desc "State management library for JavaScript applications"
-
-# Add with relationship
-tisit add "Redux" --type framework --relates-to "React:works_with"
+# Specialized campaign knowledge capture
+campaign_entities = agent.knowledge_interface.store_campaign_knowledge({
+    "name": "Summer Product Launch",
+    "objective": "Increase brand awareness and drive initial sales",
+    "brand": "EcoTech",
+    "audiences": [
+        {"name": "Eco-conscious Millennials", "description": "..."}
+    ],
+    "creative_approaches": [
+        {"name": "Emotional Storytelling", "description": "..."}
+    ]
+})
 ```
 
-### 2. Knowledge Exploration
+### 2. Knowledge Retrieval
 
-To explore existing knowledge:
+Agents can retrieve knowledge to inform decisions:
 
-```bash
-# Basic search
-tisit find "React"
+```python
+# Simple context retrieval
+knowledge = agent.knowledge_interface.get_knowledge_context(
+    query="sustainability marketing",
+    entity_types=["creative_approach", "audience_segment"],
+    tags=["eco-friendly", "green"]
+)
 
-# Type-specific search
-tisit find --type framework
-
-# Relationship exploration
-tisit find "React" --related
-
-# Visualization
-tisit visualize "React" --depth 2
+# Comprehensive campaign knowledge retrieval
+campaign_knowledge = agent.knowledge_interface.retrieve_campaign_knowledge(
+    "Summer Product Launch"
+)
 ```
 
-### 3. Documentation Integration
+### 3. Relationship Management
 
-In documentation files:
+Creating connections between knowledge entities:
 
-```markdown
-# Component Architecture
+```python
+# Create relationships
+agent.knowledge_interface.connect_entities(
+    source_name="Emotional Storytelling",
+    target_name="Brand Awareness",
+    relation_type="increases",
+    description="Emotional storytelling has been shown to increase brand awareness"
+)
 
-Our system uses the [[tisit:React]] framework with a [[tisit:Redux]] state management approach.
+# Find connections
+paths = knowledge_graph.find_path(
+    source_id=entity1_id,
+    target_id=entity2_id,
+    max_depth=3
+)
 ```
 
-The documentation system would expand these references with links and tooltips.
+## Visualization and Exploration
 
-## Initial Implementation Plan
+The knowledge graph supports visualization capabilities:
 
-### Phase 1: Basic Structure
+- **Graph Visualization**:
+  - NetworkX integration with matplotlib
+  - Interactive visualizations (planned)
+  - Custom node coloring by entity type
+  - Edge labels showing relationship types
 
-1. Create the basic entity data structure
-2. Implement simple file-based storage
-3. Develop CLI add and find commands
-4. Establish basic Git integration
+- **CLI Exploration**:
+  - List entities by type: `tisit list --type campaign`
+  - Search for specific entities: `tisit search "emotional storytelling"`
+  - View entity details: `tisit view "Summer Product Launch" --related`
+  - Create relationships: `tisit link "Technique A" "Metric B" increases`
 
-### Phase 2: Relationship Management
+## Integration Points
 
-1. Implement relationship data structure
-2. Create relationship visualization
-3. Add relationship queries
-4. Develop relationship suggestion
+The TISIT Knowledge Graph integrates with the broader system in several ways:
 
-### Phase 3: Integration
+1. **Agent Framework Integration**:
+   - Specialized agent classes with knowledge capabilities
+   - Standard interfaces for knowledge access
+   - Background knowledge capture during agent activities
 
-1. Create documentation integration
-2. Implement IDE plugins
-3. Develop agent integration
-4. Build web interface
+2. **Process Framework Integration**:
+   - Process steps can capture and use knowledge
+   - Knowledge-enhanced decision points
+   - Process outcomes stored as knowledge entities
 
-## Maintenance Processes
+3. **API Layer Integration** (Planned):
+   - RESTful API for knowledge access
+   - GraphQL interface for complex graph queries
+   - WebSocket notifications for knowledge updates
 
-1. **Regular Reviews**: Scheduled reviews of entities for accuracy
-2. **Orphan Detection**: Identifying disconnected entities
-3. **Suggestion System**: Recommending potential relationships
-4. **Usage Tracking**: Monitoring which entities are queried
-5. **Expansion Prompts**: Suggesting areas for knowledge expansion
+4. **Dashboard Integration** (Planned):
+   - Interactive knowledge exploration
+   - Visual relationship browsing
+   - Knowledge analytics and metrics
 
-## Success Metrics
+## Future Development
 
-TISIT will be successful when:
+Ongoing and planned enhancements to the TISIT Knowledge Graph:
 
-1. New terms are consistently captured
-2. Knowledge retrieval is faster than web searching
-3. Documentation automatically incorporates knowledge
-4. Project members have a shared understanding of terminology
-5. Knowledge gaps are easily identified
+1. **REST API Development**:
+   - Complete RESTful API for programmatic access
+   - Authentication and authorization controls
+   - Rate limiting and caching for performance
+
+2. **Dashboard Visualizations**:
+   - Interactive graph visualization in the client dashboard
+   - Knowledge entity browser and editor
+   - Campaign-specific knowledge views
+
+3. **Automated Knowledge Capture**:
+   - Background processes for automatic knowledge extraction
+   - Integration with agent communication channels
+   - Natural language processing for knowledge identification
+
+4. **Advanced Query Capabilities**:
+   - Natural language queries for knowledge retrieval
+   - Semantic search with embeddings
+   - Complex pattern matching for insights discovery
 
 ## Conclusion
 
-This knowledge graph implementation of TISIT provides a structured way to capture and relate important terms, technologies, frameworks, and people relevant to our project. By maintaining this graph, we create a valuable resource that grows with the project and supports both human understanding and agent operations.
+The TISIT Knowledge Graph serves as the collective intelligence engine for our AI-native advertising agency. By capturing, organizing, and providing access to knowledge across all aspects of the platform, it enables agents to make more informed decisions, learn from past experiences, and continuously improve the quality of their outputs.
+
+This implementation follows our core architectural principles, particularly "Data-Driven Evolution" and "Agent-First Architecture," by providing a structured way for agents to build and leverage collective knowledge.

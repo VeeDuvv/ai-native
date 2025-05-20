@@ -29,13 +29,7 @@ from fastapi.responses import JSONResponse
 from fastapi.routing import APIRouter
 
 from src.api_layer.core.config import config
-from src.api_layer.controllers import (
-    auth,
-    campaigns,
-    creatives,
-    audiences,
-    media,
-)
+from src.api_layer.core.responses import create_response, create_error_response
 
 # Set up logging
 logger = logging.getLogger("api")
@@ -97,6 +91,15 @@ async def add_timestamp_to_response(request: Request, call_next):
 # Create API router
 api_router = APIRouter(prefix="/api/v1")
 
+# We need to import controllers after defining 'app' to avoid circular imports
+from src.api_layer.controllers import (
+    auth,
+    campaigns,
+    creatives,
+    audiences,
+    media,
+)
+
 # Register controller routers
 api_router.include_router(auth.router)
 api_router.include_router(campaigns.router)
@@ -106,70 +109,6 @@ api_router.include_router(media.router)
 
 # Register API router with app
 app.include_router(api_router)
-
-
-def create_response(data=None, meta=None, links=None, included=None):
-    """
-    Create a standardized API response.
-    
-    Args:
-        data: The primary response data
-        meta: Additional metadata
-        links: HATEOAS links
-        included: Related resources
-        
-    Returns:
-        Dict: Standardized response object
-    """
-    response = {}
-    
-    if data is not None:
-        response["data"] = data
-        
-    if meta is not None:
-        response["meta"] = meta
-    else:
-        response["meta"] = {}
-        
-    if links is not None:
-        response["links"] = links
-        
-    if included is not None:
-        response["included"] = included
-        
-    return response
-
-
-def create_error_response(status_code, error_code, title, detail=None, source=None):
-    """
-    Create a standardized error response.
-    
-    Args:
-        status_code: HTTP status code
-        error_code: Application-specific error code
-        title: A short, human-readable summary of the problem
-        detail: A human-readable explanation of the error
-        source: An object containing references to the source of the error
-        
-    Returns:
-        Dict: Standardized error response object
-    """
-    error = {
-        "status": str(status_code),
-        "code": error_code,
-        "title": title
-    }
-    
-    if detail:
-        error["detail"] = detail
-        
-    if source:
-        error["source"] = source
-        
-    return {
-        "errors": [error],
-        "meta": {}
-    }
 
 
 # Root endpoint

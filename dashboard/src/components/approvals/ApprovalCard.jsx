@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates a card that shows something that needs the client's approval,
-# like a new ad design or a request to spend more money on advertising.
+// Fifth Grade Explanation:
+// This file creates a card that shows something that needs the client's approval,
+// like a new ad design or a request to spend more money on advertising.
 
-# High School Explanation:
-# This component renders a card for approval requests that require client action.
-# It displays approval details, deadline information, and action buttons for
-# approving or rejecting requests, with different visual styles based on approval type.
+// High School Explanation:
+// This component renders a card for approval requests that require client action.
+// It displays approval details, deadline information, and action buttons for
+// approving or rejecting requests, with different visual styles based on approval type.
 
 import { Link } from 'react-router-dom';
 import { 

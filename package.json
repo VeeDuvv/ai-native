@@ -1,0 +1,37 @@
+{
+  "name": "ai-native",
+  "version": "0.1.0",
+  "description": "AI-Native Ad Agency Platform",
+  "main": "index.js",
+  "scripts": {
+    "test": "pytest",
+    "start:api": "python -m src.tisit.api_server",
+    "start:dashboard": "vite --config vite.config.js",
+    "dev": "npm run start:dashboard",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "author": "Vamsi Duvvuri",
+  "license": "MIT",
+  "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.11.16",
+    "@mui/material": "^5.13.2",
+    "@tanstack/react-query": "^4.29.7",
+    "@tanstack/react-query-devtools": "^4.29.7",
+    "axios": "^1.4.0",
+    "d3": "^7.8.4",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-force-graph-2d": "^1.25.0",
+    "react-force-graph-3d": "^1.23.0",
+    "react-router-dom": "^6.11.2"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.7",
+    "@types/react-dom": "^18.2.4",
+    "@vitejs/plugin-react": "^4.0.0",
+    "vite": "^4.3.9"
+  }
+}

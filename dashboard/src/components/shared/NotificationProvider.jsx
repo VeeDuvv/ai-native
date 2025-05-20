@@ -1,15 +1,15 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates a system that shows popup messages to users when something
-# important happens, like when they successfully save something or when there's an error.
+// Fifth Grade Explanation:
+// This file creates a system that shows popup messages to users when something
+// important happens, like when they successfully save something or when there's an error.
 
-# High School Explanation:
-# This component provides a global notification system using React Context.
-# It renders a stack of notification alerts in the corner of the screen and
-# exposes notification functions to any component in the application through
-# the useNotification hook.
+// High School Explanation:
+// This component provides a global notification system using React Context.
+// It renders a stack of notification alerts in the corner of the screen and
+// exposes notification functions to any component in the application through
+// the useNotification hook.
 
 import React, { createContext, useContext } from 'react';
 import useNotification from '../../hooks/useNotification';

@@ -2,18 +2,17 @@
 # Copyright (c) 2025 Vamsi Duvvuri
 
 # Fifth Grade Explanation:
-# This file tells Python that the 'tisit' folder is a package that can be used by other parts
-# of our program. It's like putting a flag on a building to say "this is part of our project".
+# This file helps our program use a special brain that remembers everything
+# about advertising. It's like having a really smart friend who never forgets anything.
 
 # High School Explanation:
-# This __init__.py file marks the tisit directory as a Python package, allowing its modules
-# to be imported elsewhere in the codebase. It also provides package-level imports and
-# version information for the TISIT knowledge graph implementation.
-
-__version__ = '0.1.0'
+# This module initializes the TISIT knowledge graph system and provides
+# import shortcuts to the main components needed for accessing and manipulating
+# the knowledge graph throughout the application.
 
 from .entity import Entity
+from .relationship import Relationship
 from .knowledge_graph import KnowledgeGraph
 from .storage import EntityStorage
-from .relationship import Relationship
-from .cli import CLI
+
+__all__ = ['Entity', 'Relationship', 'KnowledgeGraph', 'EntityStorage']

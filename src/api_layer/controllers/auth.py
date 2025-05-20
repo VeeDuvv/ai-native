@@ -22,15 +22,17 @@ from datetime import datetime, timedelta
 from typing import Dict, Any, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordRequestForm
 from pydantic import BaseModel, Field
+from jose import JWTError, jwt
 
 from src.api_layer.core.auth import (
     Token, User, create_access_token, create_refresh_token,
     get_current_active_user, verify_password
 )
 from src.api_layer.core.config import config
-from src.api_layer.core.app import create_response, create_error_response
+from src.api_layer.core.responses import create_response, create_error_response
 from src.api_layer.models.base import StandardRequest, StandardResponse
 
 

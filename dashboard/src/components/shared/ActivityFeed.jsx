@@ -1,15 +1,15 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates a list that shows all the recent things that happened with
-# your ad campaigns, like when a new ad was created or when someone approved
-# something.
+// Fifth Grade Explanation:
+// This file creates a list that shows all the recent things that happened with
+// your ad campaigns, like when a new ad was created or when someone approved
+// something.
 
-# High School Explanation:
-# This component displays a chronological feed of activities related to campaigns,
-# approvals, and system events. It formats timestamps, categorizes activities by
-# type, and provides visual indicators for different event statuses.
+// High School Explanation:
+// This component displays a chronological feed of activities related to campaigns,
+// approvals, and system events. It formats timestamps, categorizes activities by
+// type, and provides visual indicators for different event statuses.
 
 import { Link } from 'react-router-dom';
 import { 

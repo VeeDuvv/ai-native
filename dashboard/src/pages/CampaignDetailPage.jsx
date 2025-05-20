@@ -1,15 +1,15 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates a page that shows everything about one specific advertising
-# campaign, including its performance, what ads are being shown, and how much
-# money is being spent.
+// Fifth Grade Explanation:
+// This file creates a page that shows everything about one specific advertising
+// campaign, including its performance, what ads are being shown, and how much
+// money is being spent.
 
-# High School Explanation:
-# This component implements the detailed view of a single campaign with performance
-# metrics, creative assets, audience targeting information, and timeline views.
-# It allows users to manage campaign settings and monitor real-time performance data.
+// High School Explanation:
+// This component implements the detailed view of a single campaign with performance
+// metrics, creative assets, audience targeting information, and timeline views.
+// It allows users to manage campaign settings and monitor real-time performance data.
 
 import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';

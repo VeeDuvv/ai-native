@@ -1,15 +1,15 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file keeps track of information about how well our ads are performing.
-# It collects numbers like how many people clicked on ads and how much money
-# we're making, and helps show that information in charts and reports.
+// Fifth Grade Explanation:
+// This file keeps track of information about how well our ads are performing.
+// It collects numbers like how many people clicked on ads and how much money
+// we're making, and helps show that information in charts and reports.
 
-# High School Explanation:
-# This module implements a global state store for analytics data using Zustand.
-# It manages performance metrics, trend analysis, and reporting functionality,
-# providing a centralized data source for analytics visualizations across the application.
+// High School Explanation:
+// This module implements a global state store for analytics data using Zustand.
+// It manages performance metrics, trend analysis, and reporting functionality,
+// providing a centralized data source for analytics visualizations across the application.
 
 import { create } from 'zustand';
 import apiService from '../services/api';

@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file helps show notifications to users, like pop-up messages when
-# something important happens or when they need to take action on something.
+// Fifth Grade Explanation:
+// This file helps show notifications to users, like pop-up messages when
+// something important happens or when they need to take action on something.
 
-# High School Explanation:
-# This module implements a custom React hook for managing notifications in the application.
-# It provides a standardized system for displaying success, error, warning and info messages
-# with consistent styling and behavior across the entire dashboard.
+// High School Explanation:
+// This module implements a custom React hook for managing notifications in the application.
+// It provides a standardized system for displaying success, error, warning and info messages
+// with consistent styling and behavior across the entire dashboard.
 
 import { useState, useCallback } from 'react';
 

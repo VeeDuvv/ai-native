@@ -1,14 +1,14 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file keeps track of all the advertising campaigns in our system. It remembers
-# which campaigns exist, their details, and helps other parts of the app work with them.
+// Fifth Grade Explanation:
+// This file keeps track of all the advertising campaigns in our system. It remembers
+// which campaigns exist, their details, and helps other parts of the app work with them.
 
-# High School Explanation:
-# This module implements a global state store for campaign data using Zustand.
-# It manages campaign listings, filtering, sorting, and CRUD operations,
-# centralizing campaign data access across the application.
+// High School Explanation:
+// This module implements a global state store for campaign data using Zustand.
+// It manages campaign listings, filtering, sorting, and CRUD operations,
+// centralizing campaign data access across the application.
 
 import { create } from 'zustand';
 import apiService from '../services/api';

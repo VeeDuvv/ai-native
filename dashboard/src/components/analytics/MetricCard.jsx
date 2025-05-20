@@ -1,15 +1,15 @@
-# SPDX-License-Identifier: MIT
-# Copyright (c) 2025 Vamsi Duvvuri
+// SPDX-License-Identifier: MIT
+// Copyright (c) 2025 Vamsi Duvvuri
 
-# Fifth Grade Explanation:
-# This file creates a card that shows one important number about how well
-# advertising campaigns are doing, like how many people saw the ads.
+// Fifth Grade Explanation:
+// This file creates a card that shows one important number about how well
+// advertising campaigns are doing, like how many people saw the ads.
 
-# High School Explanation:
-# This component displays a single metric in a card format with optional 
-# percentage indicator and trend visualization. It's designed to highlight 
-# key performance indicators in the dashboard with visual indicators for
-# quick performance assessment.
+// High School Explanation:
+// This component displays a single metric in a card format with optional 
+// percentage indicator and trend visualization. It's designed to highlight 
+// key performance indicators in the dashboard with visual indicators for
+// quick performance assessment.
 
 import { RiArrowUpSLine, RiArrowDownSLine } from 'react-icons/ri';
 
