@@ -1,49 +1,27 @@
-# AI-Native Ad Agency
+# Koya: AI-Native Advertising Agency
 
-> Building the future of advertising with AI-first principles
+## Project Overview
 
-## Overview
+Koya is an AI-native advertising agency platform that leverages generative AI and autonomous agents to disrupt the traditional advertising industry. Built on the principles of the Cognitive Architectures for Language Agents (CoALA) framework, Koya aims to transform how advertising campaigns are created, managed, and optimized.
 
-This repository contains the architecture, design, and implementation of an AI-native advertising agency platform. We're creating a system where autonomous AI agents collaborate to plan, create, and optimize advertising campaigns with minimal human intervention.
+## Key Features
 
-## Vision
+- **Autonomous Agent Ecosystem**: Specialized AI agents for strategy, creative, media, and analytics
+- **Knowledge Graph**: Comprehensive representation of advertising entities and their relationships
+- **Cognitive Architecture**: Memory systems, action spaces, and decision procedures based on the CoALA framework
+- **Collaborative Interface**: Tools for humans and AI to work together seamlessly
 
-Our vision is to revolutionize the advertising industry by building a truly AI-native platform that leverages the power of autonomous agents while maintaining the flexibility to adapt to changing requirements and technologies.
+## Technology Stack
 
-## Core Principles
+- **Backend**: FastAPI, Python, SQLAlchemy
+- **AI/ML**: LangChain, OpenAI, custom agent frameworks
+- **Frontend**: To be determined
+- **Database**: To be determined
 
-- **Agent-First Architecture**: Autonomous AI agents as first-class citizens
-- **API-First Design**: All functionality built as APIs first, interfaces second
-- **Extensibility Over Optimization**: Prioritizing the ability to extend our system
-- **Separation of Concerns**: Clean separation between system components
-- **Data-Driven Evolution**: System learns and improves based on its own operation
-- **Minimizing Technical Debt**: Long-term focus over short-term gains
-- **Human-AI Collaboration**: Designing for effective collaboration
+## Project Status
 
-## Repository Structure
-
-- `docs/`: Documentation for architecture, planning, and processes
-  - `architecture/`: System architecture and component design
-  - `planning/`: Development roadmap and planning documents
-- `src/`: Source code for the platform (coming soon)
-
-## Current Status
-
-This project is in early development. We are currently:
-
-1. Defining core architecture
-2. Planning MVP development
-3. Designing agent framework
-4. Creating API specifications
+This project is in early architectural design phase. We are currently designing the core components based on the CoALA framework.
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## Contributors
-
-- Vamsi Duvvuri - Project Lead
-
----
-
-© 2025 Vamsi Duvvuri
+MIT License © 2025 Vamsi Duvvuri
