@@ -322,9 +322,13 @@ const SubwayMap = () => {
     workflowLines.forEach((line, i) => {
       const lineGroup = legendGroup.append('g')
         .attr('transform', `translate(0, ${i * 25 + 40})`)
-        .attr('class', d => `legend-item workflow-legend-item workflow-${line.id}`)
+        .attr('class', `legend-item workflow-legend-item workflow-${line.id}`)
         .classed('active', selectedLine === line.id)
-        .on('click', () => {
+        .on('click', (event) => {
+          // Prevent propagation to avoid SVG click handler clearing selections
+          event.stopPropagation();
+          console.log('Workflow clicked:', line.id);
+          
           // Handle exclusive selection
           if (selectedLine === line.id) {
             setSelectedLine(null);
@@ -379,7 +383,11 @@ const SubwayMap = () => {
         .attr('transform', `translate(0, ${i * 25 + officeStartY + 15})`)
         .attr('class', `legend-item office-legend-item office-${item.office}`)
         .classed('active', selectedOffice === item.office)
-        .on('click', () => {
+        .on('click', (event) => {
+          // Prevent propagation to avoid SVG click handler clearing selections
+          event.stopPropagation();
+          console.log('Office clicked:', item.office);
+          
           // Handle exclusive selection
           if (selectedOffice === item.office) {
             setSelectedOffice(null);
@@ -410,10 +418,19 @@ const SubwayMap = () => {
       .attr('y', -10)
       .attr('width', legendBBox.width + 20)
       .attr('height', legendBBox.height + 20)
-      .attr('rx', 5);
+      .attr('rx', 5)
+      .on('click', function(event) {
+        // Prevent click from propagating to SVG and clearing selections
+        event.stopPropagation();
+      });
       
     // Ensure the legend is above other elements
     legendGroup.raise();
+    
+    // Make sure the entire legend group prevents click propagation
+    legendGroup.on('click', function(event) {
+      event.stopPropagation();
+    });
 
     // Initial reset zoom
     svg.call(zoomBehavior.transform, d3.zoomIdentity);
@@ -428,6 +445,9 @@ const SubwayMap = () => {
 
     // Apply any selections or filters
     applySelections();
+    
+    // Make sure campaigns are positioned correctly
+    updateCampaignPositions();
     
     // Stop simulation after initial layout
     setTimeout(() => {
@@ -540,10 +560,16 @@ const SubwayMap = () => {
         })
         .classed('highlighted', true)
         .classed('extreme-dimmed', false)
+        .each(function() {
+          // Store original transform for restoration if needed
+          const originalTransform = d3.select(this).attr('transform');
+          d3.select(this).attr('data-original-transform', originalTransform);
+        })
         .transition()
         .duration(300)
         .attr('transform', function() {
-          return d3.select(this).attr('transform') + ' scale(1.5)';
+          const currentTransform = d3.select(this).attr('data-original-transform') || '';
+          return currentTransform + ' scale(1.5)';
         });
     }
     
@@ -593,10 +619,16 @@ const SubwayMap = () => {
         })
         .classed('highlighted', true)
         .classed('extreme-dimmed', false)
+        .each(function() {
+          // Store original transform for restoration if needed
+          const originalTransform = d3.select(this).attr('transform');
+          d3.select(this).attr('data-original-transform', originalTransform);
+        })
         .transition()
         .duration(300)
         .attr('transform', function() {
-          return d3.select(this).attr('transform') + ' scale(1.5)';
+          const currentTransform = d3.select(this).attr('data-original-transform') || '';
+          return currentTransform + ' scale(1.5)';
         });
     }
     
