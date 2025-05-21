@@ -6,17 +6,86 @@ import * as d3 from 'd3';
 import { agents, workflowLines, connections, activeCampaigns } from '../data/workflows';
 import './SubwayMap.css';
 
+// Physics simulation parameters
+const SIMULATION_DEFAULTS = {
+  forceStrength: 0.3,         // Strength of the force
+  linkDistance: 80,           // Distance between connected nodes
+  chargeStrength: -400,       // Node repulsion strength (negative value)
+  collisionRadius: 30,        // Minimum distance between nodes
+  alpha: 0.3,                 // Starting force (0-1)
+  alphaDecay: 0.02,           // How quickly the force reduces
+  alphaMin: 0.001,            // Minimum force before simulation rests
+  velocityDecay: 0.4,         // Friction coefficient
+  centerForceX: 0.8,          // Strength of force pulling to center-x (0-1)
+  centerForceY: 0.8,          // Strength of force pulling to center-y (0-1)
+  groupingForceStrength: 0.4,  // Strength of grouping force by office type
+};
+
 const SubwayMap = () => {
   const svgRef = useRef(null);
+  const simulationRef = useRef(null);
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [selectedLine, setSelectedLine] = useState(null);
   const [hoveredAgent, setHoveredAgent] = useState(null);
   const [zoom, setZoom] = useState({ k: 1, x: 0, y: 0 });
+  const [simulationParams, setSimulationParams] = useState(SIMULATION_DEFAULTS);
+  const [isSimulationRunning, setIsSimulationRunning] = useState(true);
+  const [nodesData, setNodesData] = useState([]);
+  const [linksData, setLinksData] = useState([]);
+
+  // Prepare data for force simulation
+  useEffect(() => {
+    // Create nodes data from agents
+    const nodes = agents.map(agent => ({
+      ...agent,
+      // Keep original positions as starting positions
+      x: agent.position.x,
+      y: agent.position.y,
+      // Add properties for simulation
+      radius: 12,
+      groupX: getGroupXPosition(agent.office),
+      groupY: getGroupYPosition(agent.office)
+    }));
+    
+    // Create links data from connections
+    const links = connections.map(connection => ({
+      ...connection,
+      // Convert source and target from id to object reference (required by D3 force)
+      source: connection.source,
+      target: connection.target,
+      // Add line color for rendering
+      color: workflowLines.find(l => l.id === connection.lineId)?.color || '#999'
+    }));
+    
+    setNodesData(nodes);
+    setLinksData(links);
+  }, []);
+  
+  // Function to determine x-position grouping by office type
+  const getGroupXPosition = (office) => {
+    const width = svgRef.current?.clientWidth || 1200;
+    switch(office) {
+      case 'front': return width * 0.2;
+      case 'middle': return width * 0.5;
+      case 'back': return width * 0.8;
+      case 'executive': return width * 0.5;
+      default: return width * 0.5;
+    }
+  };
+  
+  // Function to determine y-position grouping by office type
+  const getGroupYPosition = (office) => {
+    const height = svgRef.current?.clientHeight || 800;
+    switch(office) {
+      case 'executive': return height * 0.15;
+      default: return height * 0.5; // All other offices spread vertically
+    }
+  };
 
   // Initialize and render the subway map
   useEffect(() => {
-    if (!svgRef.current) return;
+    if (!svgRef.current || nodesData.length === 0 || linksData.length === 0) return;
 
     // Clear any existing svg content
     d3.select(svgRef.current).selectAll("*").remove();
@@ -48,41 +117,50 @@ const SubwayMap = () => {
     const agentsGroup = mainGroup.append('g').attr('class', 'agents-group');
     const campaignsGroup = mainGroup.append('g').attr('class', 'campaigns-group');
     const labelsGroup = mainGroup.append('g').attr('class', 'labels-group');
+    
+    // Create force simulation
+    const simulation = d3.forceSimulation(nodesData)
+      .force('link', d3.forceLink(linksData)
+        .id(d => d.id)
+        .distance(simulationParams.linkDistance)
+        .strength(simulationParams.forceStrength))
+      .force('charge', d3.forceManyBody()
+        .strength(simulationParams.chargeStrength))
+      .force('collision', d3.forceCollide()
+        .radius(simulationParams.collisionRadius))
+      .force('x', d3.forceX(d => d.groupX).strength(simulationParams.centerForceX))
+      .force('y', d3.forceY(d => d.groupY).strength(simulationParams.centerForceY))
+      .alpha(simulationParams.alpha)
+      .alphaDecay(simulationParams.alphaDecay)
+      .alphaMin(simulationParams.alphaMin)
+      .velocityDecay(simulationParams.velocityDecay);
+    
+    // Store simulation reference for controls
+    simulationRef.current = simulation;
 
     // Draw connections (subway lines)
-    connections.forEach(connection => {
-      const line = workflowLines.find(l => l.id === connection.lineId);
-      const source = agents.find(a => a.id === connection.source);
-      const target = agents.find(a => a.id === connection.target);
-      
-      if (!source || !target || !line) return;
-      
-      // Create a path generator for curved lines
-      const midX = (source.position.x + target.position.x) / 2;
-      const midY = (source.position.y + target.position.y) / 2 - 20; // Curve upward slightly
-      
-      const path = `M${source.position.x},${source.position.y} 
-                    Q${midX},${midY} 
-                    ${target.position.x},${target.position.y}`;
-      
-      connectionsGroup.append('path')
-        .attr('d', path)
-        .attr('stroke', line.color)
-        .attr('stroke-width', 4)
-        .attr('fill', 'none')
-        .attr('class', `connection connection-${connection.id} line-${line.id}`)
-        .attr('data-source', source.id)
-        .attr('data-target', target.id)
-        .attr('data-line', line.id);
-    });
+    const link = connectionsGroup.selectAll('.connection')
+      .data(linksData)
+      .enter()
+      .append('path')
+      .attr('stroke', d => d.color)
+      .attr('stroke-width', 4)
+      .attr('fill', 'none')
+      .attr('class', d => `connection connection-${d.id} line-${d.lineId}`)
+      .attr('data-source', d => d.source)
+      .attr('data-target', d => d.target)
+      .attr('data-line', d => d.lineId);
 
     // Draw agents (stations)
-    agentsGroup.selectAll('.agent-station')
-      .data(agents)
+    const node = agentsGroup.selectAll('.agent-station')
+      .data(nodesData)
       .enter()
       .append('g')
       .attr('class', d => `agent-station agent-${d.id} office-${d.office}`)
-      .attr('transform', d => `translate(${d.position.x}, ${d.position.y})`)
+      .call(d3.drag()
+        .on('start', dragstarted)
+        .on('drag', dragged)
+        .on('end', dragended))
       .on('click', (event, d) => {
         event.stopPropagation(); // Prevent triggering click on background
         setSelectedAgent(d);
@@ -107,71 +185,118 @@ const SubwayMap = () => {
           .append('circle')
           .attr('r', 8)
           .attr('fill', d.color);
-          
-        // Add label
-        labelsGroup.append('text')
-          .attr('x', d.position.x)
-          .attr('y', d.position.y + 25)
-          .attr('text-anchor', 'middle')
-          .attr('class', 'agent-label')
-          .text(d.name);
       });
+      
+    // Add labels (separate from nodes for better control)
+    const label = labelsGroup.selectAll('.agent-label')
+      .data(nodesData)
+      .enter()
+      .append('text')
+      .attr('class', 'agent-label')
+      .attr('text-anchor', 'middle')
+      .text(d => d.name);
+      
+    // Functions for drag behavior
+    function dragstarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x;
+      d.fy = d.y;
+    }
+    
+    function dragged(event, d) {
+      d.fx = event.x;
+      d.fy = event.y;
+    }
+    
+    function dragended(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      if (!isSimulationRunning) {
+        d.fx = event.x;
+        d.fy = event.y;
+      } else {
+        d.fx = null;
+        d.fy = null;
+      }
+    }
 
-    // Draw active campaigns (trains)
-    activeCampaigns.forEach(campaign => {
-      const line = workflowLines.find(l => l.id === campaign.lineId);
-      const currentStation = agents.find(a => a.id === campaign.currentStationId);
+    // Simulation tick function to update positions
+    simulation.on('tick', () => {
+      // Update connection paths
+      link.attr('d', d => {
+        const sourceNode = nodesData.find(n => n.id === d.source);
+        const targetNode = nodesData.find(n => n.id === d.target);
+        
+        if (!sourceNode || !targetNode) return '';
+        
+        // Create a curved path between nodes
+        const midX = (sourceNode.x + targetNode.x) / 2;
+        const midY = (sourceNode.y + targetNode.y) / 2 - 20; // Curve upward slightly
+        
+        return `M${sourceNode.x},${sourceNode.y} Q${midX},${midY} ${targetNode.x},${targetNode.y}`;
+      });
       
-      if (!currentStation || !line) return;
+      // Update agent station positions
+      node.attr('transform', d => `translate(${d.x}, ${d.y})`);
       
-      // Find the connection to the next station
-      const nextConnection = connections.find(c => 
-        c.source === campaign.currentStationId && 
-        c.target === campaign.nextStationId &&
-        c.lineId === campaign.lineId
-      );
+      // Update label positions
+      label.attr('x', d => d.x)
+           .attr('y', d => d.y + 25);
       
-      if (!nextConnection) return;
-      
-      const nextStation = agents.find(a => a.id === campaign.nextStationId);
-      
-      // Calculate position along the connection (based on progress)
-      const progress = campaign.progress / 100;
-      const campaignX = currentStation.position.x + (nextStation.position.x - currentStation.position.x) * progress;
-      const campaignY = currentStation.position.y + (nextStation.position.y - currentStation.position.y) * progress;
-      
-      // Draw campaign train
-      campaignsGroup.append('g')
-        .attr('class', `campaign campaign-${campaign.id} priority-${campaign.priority}`)
-        .attr('transform', `translate(${campaignX}, ${campaignY})`)
-        .on('click', (event) => {
-          event.stopPropagation();
-          setSelectedCampaign(campaign);
-        })
-        .each(function() {
-          // Train car
-          d3.select(this)
-            .append('rect')
-            .attr('x', -8)
-            .attr('y', -8)
-            .attr('width', 16)
-            .attr('height', 16)
-            .attr('rx', 3)
-            .attr('fill', line.color)
-            .attr('stroke', 'white')
-            .attr('stroke-width', 1);
-          
-          // Priority indicator
-          if (campaign.priority <= 2) {
-            d3.select(this)
-              .append('circle')
-              .attr('cx', 4)
-              .attr('cy', -4)
-              .attr('r', 3)
-              .attr('fill', campaign.priority === 1 ? '#f44336' : '#ff9800');
-          }
-        });
+      // Update campaign positions
+      updateCampaignPositions();
     });
+    
+    // Function to update campaign positions based on agent positions
+    function updateCampaignPositions() {
+      // Remove existing campaigns
+      campaignsGroup.selectAll('*').remove();
+      
+      // Draw active campaigns (trains)
+      activeCampaigns.forEach(campaign => {
+        const line = workflowLines.find(l => l.id === campaign.lineId);
+        const currentStationNode = nodesData.find(n => n.id === campaign.currentStationId);
+        const nextStationNode = nodesData.find(n => n.id === campaign.nextStationId);
+        
+        if (!currentStationNode || !nextStationNode || !line) return;
+        
+        // Calculate position along the connection (based on progress)
+        const progress = campaign.progress / 100;
+        const campaignX = currentStationNode.x + (nextStationNode.x - currentStationNode.x) * progress;
+        const campaignY = currentStationNode.y + (nextStationNode.y - currentStationNode.y) * progress;
+        
+        // Draw campaign train
+        campaignsGroup.append('g')
+          .attr('class', `campaign campaign-${campaign.id} priority-${campaign.priority}`)
+          .attr('transform', `translate(${campaignX}, ${campaignY})`)
+          .on('click', (event) => {
+            event.stopPropagation();
+            setSelectedCampaign(campaign);
+          })
+          .each(function() {
+            // Train car
+            d3.select(this)
+              .append('rect')
+              .attr('x', -8)
+              .attr('y', -8)
+              .attr('width', 16)
+              .attr('height', 16)
+              .attr('rx', 3)
+              .attr('fill', line.color)
+              .attr('stroke', 'white')
+              .attr('stroke-width', 1);
+            
+            // Priority indicator
+            if (campaign.priority <= 2) {
+              d3.select(this)
+                .append('circle')
+                .attr('cx', 4)
+                .attr('cy', -4)
+                .attr('r', 3)
+                .attr('fill', campaign.priority === 1 ? '#f44336' : '#ff9800');
+            }
+          });
+      });
+    }
 
     // Add legend for workflow lines
     const legendGroup = svg.append('g')
@@ -211,8 +336,20 @@ const SubwayMap = () => {
 
     // Apply any selections or filters
     applySelections();
+    
+    // Stop simulation after initial layout
+    setTimeout(() => {
+      if (!isSimulationRunning) {
+        simulation.stop();
+      }
+    }, 2000);
 
-  }, [zoom.k]); // Re-render on zoom changes
+    // Clean up function
+    return () => {
+      simulation.stop();
+    };
+
+  }, [nodesData, linksData, zoom.k, simulationParams, isSimulationRunning]); // Re-render on data or parameter changes
 
   // Apply highlighting based on selections
   useEffect(() => {
@@ -461,13 +598,198 @@ const SubwayMap = () => {
       zoomBehavior.transform, d3.zoomIdentity
     );
   };
+  
+  // Handler for toggling simulation
+  const handleToggleSimulation = () => {
+    setIsSimulationRunning(!isSimulationRunning);
+    if (!simulationRef.current) return;
+    
+    if (!isSimulationRunning) {
+      // Resume simulation
+      simulationRef.current.alpha(0.3).restart();
+      
+      // Release fixed positions
+      nodesData.forEach(node => {
+        node.fx = null;
+        node.fy = null;
+      });
+    } else {
+      // Stop simulation and fix all nodes in place
+      simulationRef.current.stop();
+      
+      // Fix nodes in current positions
+      nodesData.forEach(node => {
+        node.fx = node.x;
+        node.fy = node.y;
+      });
+    }
+  };
+  
+  // Handler for adjusting simulation parameters
+  const handleAdjustSimulation = (param, value) => {
+    setSimulationParams(prev => {
+      const newParams = { ...prev, [param]: value };
+      
+      // Update simulation with new parameters if it exists
+      if (simulationRef.current) {
+        switch(param) {
+          case 'forceStrength':
+            simulationRef.current.force('link').strength(value);
+            break;
+          case 'linkDistance':
+            simulationRef.current.force('link').distance(value);
+            break;
+          case 'chargeStrength':
+            simulationRef.current.force('charge').strength(value);
+            break;
+          case 'collisionRadius':
+            simulationRef.current.force('collision').radius(value);
+            break;
+          case 'centerForceX':
+            simulationRef.current.force('x').strength(value);
+            break;
+          case 'centerForceY':
+            simulationRef.current.force('y').strength(value);
+            break;
+          default:
+            // For parameters that need simulation restart
+            simulationRef.current.alpha(newParams.alpha)
+              .alphaDecay(newParams.alphaDecay)
+              .alphaMin(newParams.alphaMin)
+              .velocityDecay(newParams.velocityDecay)
+              .restart();
+        }
+      }
+      
+      return newParams;
+    });
+  };
+  
+  // Handler for re-running the simulation
+  const handleRestartSimulation = () => {
+    if (!simulationRef.current) return;
+    simulationRef.current.alpha(simulationParams.alpha).restart();
+  };
 
+  // Toggle simulation parameters panel
+  const [showSimulationParams, setShowSimulationParams] = useState(false);
+  
   return (
     <div className="subway-map-container">
       <div className="subway-controls">
-        <button onClick={handleZoomIn}>+</button>
-        <button onClick={handleZoomOut}>-</button>
-        <button onClick={handleResetZoom}>Reset</button>
+        <div className="control-group">
+          <h4>View Controls</h4>
+          <button onClick={handleZoomIn} title="Zoom In">+</button>
+          <button onClick={handleZoomOut} title="Zoom Out">-</button>
+          <button onClick={handleResetZoom} title="Reset Zoom">Reset</button>
+        </div>
+        
+        <div className="control-group">
+          <h4>Layout Controls</h4>
+          <button 
+            onClick={handleToggleSimulation} 
+            className={isSimulationRunning ? 'active' : ''}
+            title={isSimulationRunning ? 'Pause Simulation' : 'Resume Simulation'}
+          >
+            {isSimulationRunning ? '⏸' : '▶️'}
+          </button>
+          <button onClick={handleRestartSimulation} title="Restart Simulation">🔄</button>
+          <button 
+            onClick={() => setShowSimulationParams(!showSimulationParams)}
+            className={showSimulationParams ? 'active' : ''}
+            title="Simulation Parameters"
+          >
+            ⚙️
+          </button>
+        </div>
+      </div>
+      
+      {/* Simulation Parameters Panel */}
+      <div className={`simulation-parameters ${showSimulationParams ? 'visible' : ''}`}>
+        <h4>Simulation Parameters</h4>
+        
+        <div className="parameter-group">
+          <label className="parameter-label">
+            Link Distance
+            <span className="parameter-value">{simulationParams.linkDistance}</span>
+          </label>
+          <input 
+            type="range" 
+            min="30" 
+            max="200" 
+            value={simulationParams.linkDistance}
+            onChange={(e) => handleAdjustSimulation('linkDistance', Number(e.target.value))}
+          />
+        </div>
+        
+        <div className="parameter-group">
+          <label className="parameter-label">
+            Charge Strength
+            <span className="parameter-value">{simulationParams.chargeStrength}</span>
+          </label>
+          <input 
+            type="range" 
+            min="-1000" 
+            max="-100" 
+            value={simulationParams.chargeStrength}
+            onChange={(e) => handleAdjustSimulation('chargeStrength', Number(e.target.value))}
+          />
+        </div>
+        
+        <div className="parameter-group">
+          <label className="parameter-label">
+            Force Strength
+            <span className="parameter-value">{simulationParams.forceStrength.toFixed(2)}</span>
+          </label>
+          <input 
+            type="range" 
+            min="0.1" 
+            max="1" 
+            step="0.1"
+            value={simulationParams.forceStrength}
+            onChange={(e) => handleAdjustSimulation('forceStrength', Number(e.target.value))}
+          />
+        </div>
+        
+        <div className="parameter-group">
+          <label className="parameter-label">
+            Collision Radius
+            <span className="parameter-value">{simulationParams.collisionRadius}</span>
+          </label>
+          <input 
+            type="range" 
+            min="10" 
+            max="60" 
+            value={simulationParams.collisionRadius}
+            onChange={(e) => handleAdjustSimulation('collisionRadius', Number(e.target.value))}
+          />
+        </div>
+        
+        <div className="parameter-group">
+          <label className="parameter-label">
+            Center Force
+            <span className="parameter-value">{simulationParams.centerForceX.toFixed(2)}</span>
+          </label>
+          <input 
+            type="range" 
+            min="0" 
+            max="1" 
+            step="0.1"
+            value={simulationParams.centerForceX}
+            onChange={(e) => {
+              const value = Number(e.target.value);
+              handleAdjustSimulation('centerForceX', value);
+              handleAdjustSimulation('centerForceY', value);
+            }}
+          />
+        </div>
+        
+        <button 
+          className="toggle-button"
+          onClick={handleRestartSimulation}
+        >
+          Apply Changes
+        </button>
       </div>
       <svg 
         ref={svgRef} 
