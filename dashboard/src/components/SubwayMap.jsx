@@ -27,6 +27,7 @@ const SubwayMap = () => {
   const [selectedAgent, setSelectedAgent] = useState(null);
   const [selectedCampaign, setSelectedCampaign] = useState(null);
   const [selectedLine, setSelectedLine] = useState(null);
+  const [selectedOffice, setSelectedOffice] = useState(null);
   const [hoveredAgent, setHoveredAgent] = useState(null);
   const [zoom, setZoom] = useState({ k: 1, x: 0, y: 0 });
   const [simulationParams, setSimulationParams] = useState(SIMULATION_DEFAULTS);
@@ -298,17 +299,40 @@ const SubwayMap = () => {
       });
     }
 
-    // Add legend for workflow lines
+    // Add combined legend for workflow lines and office types
     const legendGroup = svg.append('g')
       .attr('class', 'legend')
       .attr('transform', `translate(${margin.left}, ${margin.top})`);
     
+    // Add legend title
+    legendGroup.append('text')
+      .attr('class', 'legend-title')
+      .attr('x', 0)
+      .attr('y', 0)
+      .text('Legend');
+    
+    // Add section title for workflow lines
+    legendGroup.append('text')
+      .attr('class', 'legend-section')
+      .attr('x', 0)
+      .attr('y', 25)
+      .text('Workflow Lines');
+    
+    // Add workflow line items
     workflowLines.forEach((line, i) => {
       const lineGroup = legendGroup.append('g')
-        .attr('transform', `translate(0, ${i * 25})`)
-        .attr('class', 'legend-item')
+        .attr('transform', `translate(0, ${i * 25 + 40})`)
+        .attr('class', d => `legend-item workflow-legend-item workflow-${line.id}`)
+        .classed('active', selectedLine === line.id)
         .on('click', () => {
-          setSelectedLine(selectedLine === line.id ? null : line.id);
+          // Handle exclusive selection
+          if (selectedLine === line.id) {
+            setSelectedLine(null);
+            setSelectedOffice(null); // Clear office selection too for exclusive highlighting
+          } else {
+            setSelectedLine(line.id);
+            setSelectedOffice(null); // Clear office selection for exclusive highlighting
+          }
         });
       
       lineGroup.append('line')
@@ -324,6 +348,72 @@ const SubwayMap = () => {
         .attr('y', 14)
         .text(line.name);
     });
+    
+    // Calculate the start position for office types section
+    const officeStartY = workflowLines.length * 25 + 60;
+    
+    // Add section title for office types
+    legendGroup.append('text')
+      .attr('class', 'legend-section')
+      .attr('x', 0)
+      .attr('y', officeStartY)
+      .text('Office Types');
+    
+    // Get unique office types
+    const officeTypes = [...new Set(agents.map(a => a.office))];
+    
+    // Get a representative agent for each office type for color
+    const officeColors = officeTypes.map(office => {
+      const agent = agents.find(a => a.office === office);
+      return {
+        office,
+        color: agent ? agent.color : '#999',
+        // Add display names for office types
+        displayName: office.charAt(0).toUpperCase() + office.slice(1) + ' Office'
+      };
+    });
+    
+    // Add office type items
+    officeColors.forEach((item, i) => {
+      const officeGroup = legendGroup.append('g')
+        .attr('transform', `translate(0, ${i * 25 + officeStartY + 15})`)
+        .attr('class', `legend-item office-legend-item office-${item.office}`)
+        .classed('active', selectedOffice === item.office)
+        .on('click', () => {
+          // Handle exclusive selection
+          if (selectedOffice === item.office) {
+            setSelectedOffice(null);
+            setSelectedLine(null); // Clear line selection too for exclusive highlighting
+          } else {
+            setSelectedOffice(item.office);
+            setSelectedLine(null); // Clear line selection for exclusive highlighting
+          }
+        });
+      
+      officeGroup.append('circle')
+        .attr('cx', 15)
+        .attr('cy', 10)
+        .attr('r', 8)
+        .attr('fill', item.color);
+      
+      officeGroup.append('text')
+        .attr('x', 40)
+        .attr('y', 14)
+        .text(item.displayName);
+    });
+    
+    // Add legend background
+    const legendBBox = legendGroup.node().getBBox();
+    legendGroup.insert('rect', ':first-child')
+      .attr('class', 'legend-background')
+      .attr('x', -10)
+      .attr('y', -10)
+      .attr('width', legendBBox.width + 20)
+      .attr('height', legendBBox.height + 20)
+      .attr('rx', 5);
+      
+    // Ensure the legend is above other elements
+    legendGroup.raise();
 
     // Initial reset zoom
     svg.call(zoomBehavior.transform, d3.zoomIdentity);
@@ -332,6 +422,8 @@ const SubwayMap = () => {
     svg.on('click', () => {
       setSelectedAgent(null);
       setSelectedCampaign(null);
+      setSelectedLine(null);
+      setSelectedOffice(null);
     });
 
     // Apply any selections or filters
@@ -354,7 +446,7 @@ const SubwayMap = () => {
   // Apply highlighting based on selections
   useEffect(() => {
     applySelections();
-  }, [selectedAgent, selectedCampaign, selectedLine, hoveredAgent]);
+  }, [selectedAgent, selectedCampaign, selectedLine, selectedOffice, hoveredAgent]);
 
   // Function to apply selections and highlighting
   const applySelections = () => {
@@ -367,8 +459,15 @@ const SubwayMap = () => {
     svg.selectAll('.dimmed').classed('dimmed', false);
     svg.selectAll('.extreme-dimmed').classed('extreme-dimmed', false);
     
+    // Update legend item active status
+    svg.selectAll('.workflow-legend-item').classed('active', false);
+    svg.selectAll(`.workflow-${selectedLine}`).classed('active', true);
+    
+    svg.selectAll('.office-legend-item').classed('active', false);
+    svg.selectAll(`.office-${selectedOffice}`).classed('active', true);
+    
     // Add overlay backdrop if anything is selected
-    const hasSelection = selectedAgent || selectedCampaign || selectedLine;
+    const hasSelection = selectedAgent || selectedCampaign || selectedLine || selectedOffice;
     
     // Add or remove the semi-transparent backdrop for focus
     const backdrop = svg.select('.focus-backdrop');
@@ -403,7 +502,11 @@ const SubwayMap = () => {
       // Highlight selected line
       svg.selectAll(`.connection[data-line="${selectedLine}"]`)
         .classed('highlighted', true)
-        .classed('extreme-dimmed', false);
+        .classed('extreme-dimmed', false)
+        .attr('stroke-width', 6) // Increase size of highlighted connections
+        .transition()
+        .duration(300)
+        .attr('stroke-width', 6);
       
       // Find and highlight stations on this line
       const lineConnections = connections.filter(c => c.lineId === selectedLine);
@@ -415,9 +518,18 @@ const SubwayMap = () => {
       });
       
       stationsOnLine.forEach(stationId => {
-        svg.select(`.agent-${stationId}`)
-          .classed('highlighted', true)
-          .classed('extreme-dimmed', false);
+        const station = svg.select(`.agent-${stationId}`);
+        station.classed('highlighted', true)
+              .classed('extreme-dimmed', false);
+        
+        // Increase size of highlighted stations
+        station.selectAll('circle')
+          .transition()
+          .duration(300)
+          .attr('r', function() {
+            const currentR = +d3.select(this).attr('r');
+            return currentR * 1.2; // Increase radius by 20%
+          });
       });
       
       // Highlight campaigns on this line
@@ -427,7 +539,65 @@ const SubwayMap = () => {
           return campaignData && campaignData.lineId === selectedLine;
         })
         .classed('highlighted', true)
+        .classed('extreme-dimmed', false)
+        .transition()
+        .duration(300)
+        .attr('transform', function() {
+          return d3.select(this).attr('transform') + ' scale(1.5)';
+        });
+    }
+    
+    // If an office is selected, highlight all agents in that office
+    if (selectedOffice) {
+      // Select all stations with the matching office type
+      const officeStations = svg.selectAll(`.agent-station.office-${selectedOffice}`);
+      
+      // Highlight the stations
+      officeStations
+        .classed('highlighted', true)
         .classed('extreme-dimmed', false);
+      
+      // Increase size of highlighted stations
+      officeStations.selectAll('circle')
+        .transition()
+        .duration(300)
+        .attr('r', function() {
+          const currentR = +d3.select(this).attr('r');
+          return currentR * 1.2; // Increase radius by 20%
+        });
+      
+      // Highlight connections between stations in this office
+      svg.selectAll('.connection')
+        .filter(function() {
+          const source = d3.select(this).attr('data-source');
+          const target = d3.select(this).attr('data-target');
+          const sourceOffice = agents.find(a => a.id === source)?.office;
+          const targetOffice = agents.find(a => a.id === target)?.office;
+          
+          return sourceOffice === selectedOffice && targetOffice === selectedOffice;
+        })
+        .classed('highlighted', true)
+        .classed('extreme-dimmed', false)
+        .transition()
+        .duration(300)
+        .attr('stroke-width', 6); // Increase size of highlighted connections
+      
+      // Highlight campaigns at these stations
+      svg.selectAll('.campaign')
+        .filter(function() {
+          const campaignData = d3.select(this).datum();
+          if (!campaignData) return false;
+          
+          const station = agents.find(a => a.id === campaignData.currentStationId);
+          return station && station.office === selectedOffice;
+        })
+        .classed('highlighted', true)
+        .classed('extreme-dimmed', false)
+        .transition()
+        .duration(300)
+        .attr('transform', function() {
+          return d3.select(this).attr('transform') + ' scale(1.5)';
+        });
     }
     
     // If an agent is selected, highlight it and its connections
@@ -551,8 +721,8 @@ const SubwayMap = () => {
       svg.selectAll('.hovered').classed('hovered', false);
     }
     
-    // Enhance the highlighted elements
-    svg.selectAll('.highlighted')
+    // Enhance the highlighted elements that haven't been specifically sized already
+    svg.selectAll('.highlighted:not(.agent-station):not(.campaign):not(.connection)')
       .style('transform', 'scale(1.05)')
       .style('transition', 'transform 0.3s ease');
   };

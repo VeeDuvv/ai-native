@@ -115,6 +115,28 @@
   padding: 10px;
   border-radius: 8px;
   z-index: 100;
+  pointer-events: auto;
+}
+
+.legend-background {
+  fill: rgba(0, 0, 0, 0.7);
+  stroke: rgba(255, 255, 255, 0.2);
+  stroke-width: 1px;
+}
+
+.legend-title {
+  fill: #ffffff;
+  font-size: 16px;
+  font-weight: bold;
+  text-anchor: start;
+}
+
+.legend-section {
+  fill: #aaaaff;
+  font-size: 14px;
+  font-weight: 500;
+  text-anchor: start;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .legend-item {
@@ -122,16 +144,44 @@
   align-items: center;
   margin-bottom: 5px;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  transition: all 0.2s ease;
+  opacity: 0.7;
 }
 
 .legend-item:hover {
   transform: translateX(3px);
+  opacity: 1;
+}
+
+.legend-item.active {
+  opacity: 1;
+  transform: translateX(3px) scale(1.05);
 }
 
 .legend-item text {
   fill: #ffffff;
   font-size: 12px;
+}
+
+.legend-item.active text {
+  fill: #ffffff;
+  font-weight: bold;
+}
+
+.legend-item circle, 
+.legend-item line {
+  transition: all 0.2s ease;
+}
+
+.legend-item.active circle {
+  stroke: white;
+  stroke-width: 2px;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
+}
+
+.legend-item.active line {
+  stroke-width: 6px;
+  filter: drop-shadow(0 0 3px rgba(255, 255, 255, 0.5));
 }
 
 /* Controls */
