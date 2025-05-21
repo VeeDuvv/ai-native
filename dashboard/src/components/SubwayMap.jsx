@@ -31,7 +31,7 @@ const SubwayMap = () => {
   const [hoveredAgent, setHoveredAgent] = useState(null);
   const [zoom, setZoom] = useState({ k: 1, x: 0, y: 0 });
   const [simulationParams, setSimulationParams] = useState(SIMULATION_DEFAULTS);
-  const [isSimulationRunning, setIsSimulationRunning] = useState(true);
+  const [isSimulationRunning, setIsSimulationRunning] = useState(false);
   const [nodesData, setNodesData] = useState([]);
   const [linksData, setLinksData] = useState([]);
 
@@ -43,6 +43,9 @@ const SubwayMap = () => {
       // Keep original positions as starting positions
       x: agent.position.x,
       y: agent.position.y,
+      // Prevent initial movement by fixing positions
+      fx: agent.position.x,
+      fy: agent.position.y,
       // Add properties for simulation
       radius: 12,
       groupX: getGroupXPosition(agent.office),
@@ -119,7 +122,7 @@ const SubwayMap = () => {
     const campaignsGroup = mainGroup.append('g').attr('class', 'campaigns-group');
     const labelsGroup = mainGroup.append('g').attr('class', 'labels-group');
     
-    // Create force simulation
+    // Create force simulation but don't start it immediately
     const simulation = d3.forceSimulation(nodesData)
       .force('link', d3.forceLink(linksData)
         .id(d => d.id)
@@ -134,7 +137,9 @@ const SubwayMap = () => {
       .alpha(simulationParams.alpha)
       .alphaDecay(simulationParams.alphaDecay)
       .alphaMin(simulationParams.alphaMin)
-      .velocityDecay(simulationParams.velocityDecay);
+      .velocityDecay(simulationParams.velocityDecay)
+      // Stop the simulation immediately to prevent unwanted movement
+      .stop();
     
     // Store simulation reference for controls
     simulationRef.current = simulation;
@@ -158,10 +163,29 @@ const SubwayMap = () => {
       .enter()
       .append('g')
       .attr('class', d => `agent-station agent-${d.id} office-${d.office}`)
+      // Fix all nodes in place initially to prevent movement
+      .each(function(d) {
+        // Fix nodes at their initial positions
+        d.fx = d.x;
+        d.fy = d.y;
+      })
+      // Separate drag and click behavior
       .call(d3.drag()
-        .on('start', dragstarted)
-        .on('drag', dragged)
-        .on('end', dragended))
+        .on('start', function(event) {
+          // Only enable dragging when specifically holding shift key
+          if (!event.sourceEvent.shiftKey) return;
+          dragstarted(event, event.subject);
+        })
+        .on('drag', function(event) {
+          // Only drag when shift key is pressed
+          if (!event.sourceEvent.shiftKey) return;
+          dragged(event, event.subject);
+        })
+        .on('end', function(event) {
+          // Only complete drag when shift key was pressed
+          if (!event.sourceEvent.shiftKey) return;
+          dragended(event, event.subject);
+        }))
       .on('click', (event, d) => {
         event.stopPropagation(); // Prevent triggering click on background
         setSelectedAgent(d);
@@ -249,6 +273,9 @@ const SubwayMap = () => {
     
     // Function to update campaign positions based on agent positions
     function updateCampaignPositions() {
+      // Store current selection state
+      const previousSelectedCampaign = selectedCampaign;
+      
       // Remove existing campaigns
       campaignsGroup.selectAll('*').remove();
       
@@ -266,7 +293,7 @@ const SubwayMap = () => {
         const campaignY = currentStationNode.y + (nextStationNode.y - currentStationNode.y) * progress;
         
         // Draw campaign train
-        campaignsGroup.append('g')
+        const campaignGroup = campaignsGroup.append('g')
           .attr('class', `campaign campaign-${campaign.id} priority-${campaign.priority}`)
           .attr('transform', `translate(${campaignX}, ${campaignY})`)
           .on('click', (event) => {
@@ -296,6 +323,11 @@ const SubwayMap = () => {
                 .attr('fill', campaign.priority === 1 ? '#f44336' : '#ff9800');
             }
           });
+          
+        // Restore highlighting if this campaign was selected
+        if (previousSelectedCampaign && previousSelectedCampaign.id === campaign.id) {
+          campaignGroup.classed('highlighted', true);
+        }
       });
     }
 
@@ -449,16 +481,30 @@ const SubwayMap = () => {
     // Make sure campaigns are positioned correctly
     updateCampaignPositions();
     
-    // Stop simulation after initial layout
+    // Stop simulation after short initialization if needed
     setTimeout(() => {
       if (!isSimulationRunning) {
         simulation.stop();
+        
+        // Fix all nodes in place
+        nodesData.forEach(node => {
+          node.fx = node.x;
+          node.fy = node.y;
+        });
       }
-    }, 2000);
+    }, 100); // Much shorter timeout
 
     // Clean up function
     return () => {
+      // Always stop simulation on unmount
       simulation.stop();
+      
+      // Remove any escape key listener
+      document.removeEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+          // This is just a placeholder for the event listener removal
+        }
+      });
     };
 
   }, [nodesData, linksData, zoom.k, simulationParams, isSimulationRunning]); // Re-render on data or parameter changes
@@ -815,6 +861,25 @@ const SubwayMap = () => {
         node.fx = null;
         node.fy = null;
       });
+      
+      // Display an alert to avoid confusion
+      alert('Physics simulation enabled. Note that this can interfere with interactions. Click "Pause" or press Escape to disable when done arranging nodes.');
+      
+      // Add escape key listener to easily stop simulation
+      document.addEventListener('keydown', function escHandler(e) {
+        if (e.key === 'Escape') {
+          setIsSimulationRunning(false);
+          simulationRef.current?.stop();
+          
+          // Fix nodes in current positions
+          nodesData.forEach(node => {
+            node.fx = node.x;
+            node.fy = node.y;
+          });
+          
+          document.removeEventListener('keydown', escHandler);
+        }
+      });
     } else {
       // Stop simulation and fix all nodes in place
       simulationRef.current.stop();
@@ -890,10 +955,10 @@ const SubwayMap = () => {
           <h4>Layout Controls</h4>
           <button 
             onClick={handleToggleSimulation} 
-            className={isSimulationRunning ? 'active' : ''}
-            title={isSimulationRunning ? 'Pause Simulation' : 'Resume Simulation'}
+            className={isSimulationRunning ? 'active physics-button' : 'physics-button'}
+            title={isSimulationRunning ? 'Pause Layout Physics - Currently Running' : 'Enable Layout Physics - Layout is Fixed'}
           >
-            {isSimulationRunning ? '⏸' : '▶️'}
+            {isSimulationRunning ? 'Fix Layout' : 'Adjust Layout'}
           </button>
           <button onClick={handleRestartSimulation} title="Restart Simulation">🔄</button>
           <button 
