@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="32px" height="32px" viewBox="0 0 32 32" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <title>Koya Favicon</title>
+    <g id="Favicon" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <rect id="Background" fill="#1A1A2E" x="0" y="0" width="32" height="32" rx="4"></rect>
+        <g id="Subway-Icon" transform="translate(4.000000, 4.000000)">
+            <circle id="Station-1" fill="#4C4CFF" cx="5" cy="5" r="3"></circle>
+            <circle id="Station-2" fill="#4CAF50" cx="12" cy="12" r="3"></circle>
+            <circle id="Station-3" fill="#FF9800" cx="19" cy="19" r="3"></circle>
+            <path d="M5,5 C8,8 10,10 12,12" id="Line-1" stroke="#E91E63" stroke-width="2" stroke-linecap="round"></path>
+            <path d="M12,12 C15,15 17,17 19,19" id="Line-2" stroke="#2196F3" stroke-width="2" stroke-linecap="round"></path>
+            <circle id="Train" fill="#FFFFFF" cx="8.5" cy="8.5" r="1.5"></circle>
+        </g>
+    </g>
+</svg>

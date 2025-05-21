@@ -1,0 +1,210 @@
+/* SPDX-License-Identifier: MIT */
+/* Copyright (c) 2025 Vamsi Duvvuri */
+
+/* Base styling */
+:root {
+  --primary: #4c4cff;
+  --secondary: #6c63ff;
+  --success: #4caf50;
+  --warning: #ff9800;
+  --danger: #f44336;
+  --dark: #1a1a2e;
+  --dark-accent: #16213e;
+  --light: #f5f5f5;
+  --text: #e1e1e1;
+  --accent: #2c2c6c;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', 'Helvetica Neue', Arial, sans-serif;
+  background-color: #121225;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+/* Header styling */
+.App-header {
+  background-color: var(--dark);
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--accent);
+}
+
+.App-header h1 {
+  font-size: 1.5rem;
+  color: white;
+  font-weight: 600;
+}
+
+.header-controls {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.time-display {
+  font-size: 0.875rem;
+  color: var(--text);
+  opacity: 0.8;
+}
+
+.user-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.user-name {
+  font-size: 0.875rem;
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--primary);
+  background-image: linear-gradient(45deg, var(--primary), var(--secondary));
+}
+
+/* Navigation styling */
+.main-nav {
+  background-color: var(--dark);
+  padding: 0 2rem;
+}
+
+.main-nav ul {
+  display: flex;
+  list-style: none;
+}
+
+.main-nav li {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  position: relative;
+  transition: color 0.2s ease;
+}
+
+.main-nav li:hover {
+  color: white;
+}
+
+.main-nav li.active {
+  color: white;
+  font-weight: 500;
+}
+
+.main-nav li.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background-color: var(--primary);
+}
+
+/* Main content styling */
+.App-main {
+  flex: 1;
+  padding: 1.5rem 2rem;
+}
+
+/* Dashboard stats */
+.dashboard-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-card {
+  background-color: var(--dark);
+  border-radius: 8px;
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid var(--accent);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stat-value {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+  color: white;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Map container */
+.map-container {
+  background-color: var(--dark);
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid var(--accent);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+  height: calc(100vh - 220px);
+  min-height: 600px;
+}
+
+/* Dashboard footer */
+.dashboard-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.status-normal {
+  color: var(--success);
+  font-weight: 500;
+}
+
+/* Coming soon placeholder */
+.coming-soon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 220px);
+  text-align: center;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.coming-soon h2 {
+  margin-bottom: 1rem;
+  font-size: 1.5rem;
+}
+
+/* Footer styling */
+.App-footer {
+  background-color: var(--dark);
+  padding: 1rem 2rem;
+  font-size: 0.75rem;
+  display: flex;
+  justify-content: space-between;
+  color: var(--text);
+  opacity: 0.7;
+  border-top: 1px solid var(--accent);
+}
