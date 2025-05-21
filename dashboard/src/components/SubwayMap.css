@@ -205,6 +205,45 @@
   animation: pulse-legend 2s infinite;
 }
 
+/* Error message styling */
+.nodes-error-message {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(244, 67, 54, 0.9);
+  padding: 20px;
+  border-radius: 8px;
+  color: white;
+  text-align: center;
+  max-width: 400px;
+  z-index: 1000;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.nodes-error-message h3 {
+  margin-top: 0;
+  font-size: 20px;
+}
+
+.nodes-error-message button {
+  background-color: white;
+  color: #f44336;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  font-weight: bold;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.nodes-error-message button:hover {
+  background-color: #f8f8f8;
+  transform: translateY(-2px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
 /* Controls */
 .subway-controls {
   position: absolute;

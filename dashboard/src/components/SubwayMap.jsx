@@ -37,20 +37,26 @@ const SubwayMap = () => {
 
   // Prepare data for force simulation
   useEffect(() => {
+    console.log("Initializing nodes from agents:", agents);
     // Create nodes data from agents
-    const nodes = agents.map(agent => ({
-      ...agent,
-      // Keep original positions as starting positions
-      x: agent.position.x,
-      y: agent.position.y,
-      // Prevent initial movement by fixing positions
-      fx: agent.position.x,
-      fy: agent.position.y,
-      // Add properties for simulation
-      radius: 12,
-      groupX: getGroupXPosition(agent.office),
-      groupY: getGroupYPosition(agent.office)
-    }));
+    const nodes = agents.map(agent => {
+      // Log each agent position for debugging
+      console.log(`Agent ${agent.id} position:`, agent.position);
+      
+      return {
+        ...agent,
+        // Keep original positions as starting positions - use explicit fallback if position is missing
+        x: agent.position?.x || 100 + Math.random() * 1000,
+        y: agent.position?.y || 100 + Math.random() * 600,
+        // Prevent initial movement by fixing positions
+        fx: agent.position?.x || 100 + Math.random() * 1000,
+        fy: agent.position?.y || 100 + Math.random() * 600,
+        // Add properties for simulation
+        radius: 12,
+        groupX: getGroupXPosition(agent.office),
+        groupY: getGroupYPosition(agent.office)
+      };
+    });
     
     // Create links data from connections
     const links = connections.map(connection => ({
@@ -66,9 +72,10 @@ const SubwayMap = () => {
     setLinksData(links);
   }, []);
   
-  // Function to determine x-position grouping by office type
+  // Function to determine x-position grouping by office type - using fixed values
   const getGroupXPosition = (office) => {
-    const width = svgRef.current?.clientWidth || 1200;
+    // Use fixed width to avoid undefined issues with svgRef
+    const width = 1200;
     switch(office) {
       case 'front': return width * 0.2;
       case 'middle': return width * 0.5;
@@ -78,9 +85,10 @@ const SubwayMap = () => {
     }
   };
   
-  // Function to determine y-position grouping by office type
+  // Function to determine y-position grouping by office type - using fixed values
   const getGroupYPosition = (office) => {
-    const height = svgRef.current?.clientHeight || 800;
+    // Use fixed height to avoid undefined issues with svgRef
+    const height = 800;
     switch(office) {
       case 'executive': return height * 0.15;
       default: return height * 0.5; // All other offices spread vertically
@@ -246,12 +254,29 @@ const SubwayMap = () => {
 
     // Simulation tick function to update positions
     simulation.on('tick', () => {
+      // Safety check - ensure all nodes have valid positions
+      nodesData.forEach(node => {
+        if (isNaN(node.x) || isNaN(node.y)) {
+          // Fix broken nodes by assigning fallback positions
+          console.warn(`Found NaN position for node ${node.id}, fixing...`);
+          node.x = node.position?.x || 100 + Math.random() * 1000;
+          node.y = node.position?.y || 100 + Math.random() * 600;
+          node.fx = node.x;
+          node.fy = node.y;
+        }
+      });
+      
       // Update connection paths
       link.attr('d', d => {
         const sourceNode = nodesData.find(n => n.id === d.source);
         const targetNode = nodesData.find(n => n.id === d.target);
         
         if (!sourceNode || !targetNode) return '';
+        
+        // Check for valid positions
+        if (isNaN(sourceNode.x) || isNaN(sourceNode.y) || isNaN(targetNode.x) || isNaN(targetNode.y)) {
+          return '';
+        }
         
         // Create a curved path between nodes
         const midX = (sourceNode.x + targetNode.x) / 2;
@@ -261,11 +286,16 @@ const SubwayMap = () => {
       });
       
       // Update agent station positions
-      node.attr('transform', d => `translate(${d.x}, ${d.y})`);
+      node.attr('transform', d => {
+        // Provide fallback for invalid positions
+        const x = isNaN(d.x) ? (d.position?.x || 0) : d.x;
+        const y = isNaN(d.y) ? (d.position?.y || 0) : d.y;
+        return `translate(${x}, ${y})`;
+      });
       
       // Update label positions
-      label.attr('x', d => d.x)
-           .attr('y', d => d.y + 25);
+      label.attr('x', d => isNaN(d.x) ? (d.position?.x || 0) : d.x)
+           .attr('y', d => (isNaN(d.y) ? (d.position?.y || 0) : d.y) + 25);
       
       // Update campaign positions
       updateCampaignPositions();
@@ -287,6 +317,17 @@ const SubwayMap = () => {
         
         if (!currentStationNode || !nextStationNode || !line) return;
         
+        // Check for valid positions
+        if (isNaN(currentStationNode.x) || isNaN(currentStationNode.y) || 
+            isNaN(nextStationNode.x) || isNaN(nextStationNode.y)) {
+          console.warn(`Invalid station positions for campaign ${campaign.id}`);
+          // Use fallback positions if needed
+          currentStationNode.x = currentStationNode.position?.x || 100 + Math.random() * 1000;
+          currentStationNode.y = currentStationNode.position?.y || 100 + Math.random() * 600;
+          nextStationNode.x = nextStationNode.position?.x || 100 + Math.random() * 1000;
+          nextStationNode.y = nextStationNode.position?.y || 100 + Math.random() * 600;
+        }
+          
         // Calculate position along the connection (based on progress)
         const progress = campaign.progress / 100;
         const campaignX = currentStationNode.x + (nextStationNode.x - currentStationNode.x) * progress;
@@ -941,6 +982,16 @@ const SubwayMap = () => {
   // Toggle simulation parameters panel
   const [showSimulationParams, setShowSimulationParams] = useState(false);
   
+  // Compute whether we have valid node data by checking a few sample nodes
+  const hasValidNodeData = nodesData.length > 0 && 
+                         !isNaN(nodesData[0]?.x) && 
+                         !isNaN(nodesData[0]?.y);
+  
+  // Log debug info
+  console.log("Nodes data:", nodesData.length ? "Available" : "Empty");
+  console.log("First node sample:", nodesData[0]);
+  console.log("Has valid node data:", hasValidNodeData);
+                         
   return (
     <div className="subway-map-container">
       <div className="subway-controls">
@@ -970,6 +1021,17 @@ const SubwayMap = () => {
           </button>
         </div>
       </div>
+      
+      {/* Add error message when nodes aren't visible */}
+      {!hasValidNodeData && (
+        <div className="nodes-error-message">
+          <h3>Visualization Issue Detected</h3>
+          <p>We're having trouble displaying the node positions.</p>
+          <button onClick={() => window.location.reload()}>
+            Refresh Page
+          </button>
+        </div>
+      )}
       
       {/* Simulation Parameters Panel */}
       <div className={`simulation-parameters ${showSimulationParams ? 'visible' : ''}`}>
